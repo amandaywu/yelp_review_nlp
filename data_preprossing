@@ -1,0 +1,4124 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "YlVv0pKAxWnx",
+    "outputId": "fe43db91-3b85-41d8-c2cc-5b91c9291773"
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "tCejWK0rxgvM"
+   },
+   "outputs": [],
+   "source": [
+    "train = pd.read_csv('yelp_train.csv')\n",
+    "test = pd.read_csv('yelp_test.csv')\n",
+    "sample = pd.read_csv('yelp_sample.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>user_review_count</th>\n",
+       "      <th>user_yelping_since</th>\n",
+       "      <th>business_categories</th>\n",
+       "      <th>business_city</th>\n",
+       "      <th>business_latitude</th>\n",
+       "      <th>business_longitude</th>\n",
+       "      <th>business_review_count</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>business_state</th>\n",
+       "      <th>is_good_rating</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>9uu-JXdQuQ3rXOd1Vxv8kA</td>\n",
+       "      <td>8zN3nV0zbtE377_XhlvabA</td>\n",
+       "      <td>MWahC54Rd_CNv_0VtjCD6A</td>\n",
+       "      <td>2017-06-27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Pool tables, darts, and other neighborhood bar...</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>None</td>\n",
+       "      <td>5</td>\n",
+       "      <td>2013-10-23</td>\n",
+       "      <td>Restaurants, Sports Bars, Bars, American (Trad...</td>\n",
+       "      <td>Chandler</td>\n",
+       "      <td>33.336050</td>\n",
+       "      <td>-111.844343</td>\n",
+       "      <td>158</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>AZ</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>UbCgugoTK2MfBmtU_8PXaQ</td>\n",
+       "      <td>wJ-PcjemwR44WitIJsDzsA</td>\n",
+       "      <td>N-GOto4b3ltfGJ7y-5g-pg</td>\n",
+       "      <td>2017-03-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>This place was alright. However, their classic...</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>None</td>\n",
+       "      <td>7</td>\n",
+       "      <td>2016-07-04</td>\n",
+       "      <td>Beauty &amp; Spas, Nail Salons</td>\n",
+       "      <td>Fort Mill</td>\n",
+       "      <td>35.058040</td>\n",
+       "      <td>-80.937064</td>\n",
+       "      <td>26</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>SC</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6oF9_NR1O5Y_NOE6INXfrg</td>\n",
+       "      <td>fP4sMlVw_MvyGNv4xeTGDA</td>\n",
+       "      <td>RH3w77UyXaQPiOx2jOE7zg</td>\n",
+       "      <td>2017-07-14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>First time at Pieology Pizzeria and I was impr...</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>None</td>\n",
+       "      <td>21</td>\n",
+       "      <td>2013-09-05</td>\n",
+       "      <td>Pizza, Restaurants</td>\n",
+       "      <td>Las Vegas</td>\n",
+       "      <td>36.114884</td>\n",
+       "      <td>-115.155604</td>\n",
+       "      <td>189</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>kyYWrcrr83GnJ7m_VEvwCA</td>\n",
+       "      <td>hgWMxKhrnOUd3m5nOUBIkA</td>\n",
+       "      <td>g6pwf1E-CylnZQRoaZGGdw</td>\n",
+       "      <td>2010-12-13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Its a good facility with lots of equipment and...</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>2013, 2012</td>\n",
+       "      <td>83</td>\n",
+       "      <td>2010-09-03</td>\n",
+       "      <td>Active Life, Fitness &amp; Instruction, Trainers, ...</td>\n",
+       "      <td>Las Vegas</td>\n",
+       "      <td>36.025332</td>\n",
+       "      <td>-115.120852</td>\n",
+       "      <td>316</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>K2X3XG9_M3EM0TWguo2bCw</td>\n",
+       "      <td>KMKPusWbBaIORB669W0EeQ</td>\n",
+       "      <td>14nl002my6qLaEcqYHLPig</td>\n",
+       "      <td>2016-09-12</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Very very disappointed! My shawarma chicken wa...</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>None</td>\n",
+       "      <td>28</td>\n",
+       "      <td>2016-03-24</td>\n",
+       "      <td>Mediterranean, Restaurants</td>\n",
+       "      <td>Henderson</td>\n",
+       "      <td>36.005901</td>\n",
+       "      <td>-115.111863</td>\n",
+       "      <td>61</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                review_id             business_id                 user_id  \\\n",
+       "0  9uu-JXdQuQ3rXOd1Vxv8kA  8zN3nV0zbtE377_XhlvabA  MWahC54Rd_CNv_0VtjCD6A   \n",
+       "1  UbCgugoTK2MfBmtU_8PXaQ  wJ-PcjemwR44WitIJsDzsA  N-GOto4b3ltfGJ7y-5g-pg   \n",
+       "2  6oF9_NR1O5Y_NOE6INXfrg  fP4sMlVw_MvyGNv4xeTGDA  RH3w77UyXaQPiOx2jOE7zg   \n",
+       "3  kyYWrcrr83GnJ7m_VEvwCA  hgWMxKhrnOUd3m5nOUBIkA  g6pwf1E-CylnZQRoaZGGdw   \n",
+       "4  K2X3XG9_M3EM0TWguo2bCw  KMKPusWbBaIORB669W0EeQ  14nl002my6qLaEcqYHLPig   \n",
+       "\n",
+       "         date  cool  funny  useful  \\\n",
+       "0  2017-06-27     0      0       0   \n",
+       "1  2017-03-25     0      0       0   \n",
+       "2  2017-07-14     0      0       0   \n",
+       "3  2010-12-13     1      0       0   \n",
+       "4  2016-09-12     1      1       1   \n",
+       "\n",
+       "                                                text  user_average_stars  \\\n",
+       "0  Pool tables, darts, and other neighborhood bar...                2.00   \n",
+       "1  This place was alright. However, their classic...                4.43   \n",
+       "2  First time at Pieology Pizzeria and I was impr...                4.09   \n",
+       "3  Its a good facility with lots of equipment and...                3.55   \n",
+       "4  Very very disappointed! My shawarma chicken wa...                3.75   \n",
+       "\n",
+       "   user_elite  user_review_count user_yelping_since  \\\n",
+       "0        None                  5         2013-10-23   \n",
+       "1        None                  7         2016-07-04   \n",
+       "2        None                 21         2013-09-05   \n",
+       "3  2013, 2012                 83         2010-09-03   \n",
+       "4        None                 28         2016-03-24   \n",
+       "\n",
+       "                                 business_categories business_city  \\\n",
+       "0  Restaurants, Sports Bars, Bars, American (Trad...      Chandler   \n",
+       "1                         Beauty & Spas, Nail Salons     Fort Mill   \n",
+       "2                                 Pizza, Restaurants     Las Vegas   \n",
+       "3  Active Life, Fitness & Instruction, Trainers, ...     Las Vegas   \n",
+       "4                         Mediterranean, Restaurants     Henderson   \n",
+       "\n",
+       "   business_latitude  business_longitude  business_review_count  \\\n",
+       "0          33.336050         -111.844343                    158   \n",
+       "1          35.058040          -80.937064                     26   \n",
+       "2          36.114884         -115.155604                    189   \n",
+       "3          36.025332         -115.120852                    316   \n",
+       "4          36.005901         -115.111863                     61   \n",
+       "\n",
+       "   business_average_stars business_state  is_good_rating  \n",
+       "0                     4.0             AZ               0  \n",
+       "1                     3.5             SC               0  \n",
+       "2                     4.0             NV               1  \n",
+       "3                     3.0             NV               0  \n",
+       "4                     3.5             NV               0  "
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 136
+    },
+    "colab_type": "code",
+    "id": "Ahkf5lLf0kFv",
+    "outputId": "ca5d743e-6b5b-40a9-e6de-441f2270181a"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['review_id', 'business_id', 'user_id', 'date', 'cool', 'funny',\n",
+       "       'useful', 'text', 'user_average_stars', 'user_elite',\n",
+       "       'user_review_count', 'user_yelping_since', 'business_categories',\n",
+       "       'business_city', 'business_latitude', 'business_longitude',\n",
+       "       'business_review_count', 'business_average_stars', 'business_state',\n",
+       "       'is_good_rating'],\n",
+       "      dtype='object')"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 68
+    },
+    "colab_type": "code",
+    "id": "AE_llpO32Q7u",
+    "outputId": "eb98abc2-7152-47a8-b518-27dd501196f3"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1    159858\n",
+       "0     80142\n",
+       "Name: is_good_rating, dtype: int64"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.is_good_rating.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 1000
+    },
+    "colab_type": "code",
+    "id": "7Uk8UUsc3ObF",
+    "outputId": "6c246a01-b141-4cc7-d698-ca97b3a83867"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0         Restaurants, Sports Bars, Bars, American (Trad...\n",
+       "1                                Beauty & Spas, Nail Salons\n",
+       "2                                        Pizza, Restaurants\n",
+       "3         Active Life, Fitness & Instruction, Trainers, ...\n",
+       "4                                Mediterranean, Restaurants\n",
+       "5                            Optometrists, Health & Medical\n",
+       "6         Hotels, Resorts, Casinos, Event Planning & Ser...\n",
+       "7         Breakfast & Brunch, Diners, American (New), Re...\n",
+       "8                              Pest Control, Local Services\n",
+       "9         Automotive, Auto Parts & Supplies, Tires, Whee...\n",
+       "10                              Cuban, Restaurants, Mexican\n",
+       "11                          Food, Ice Cream & Frozen Yogurt\n",
+       "12        American (Traditional), Restaurants, Beer Bar,...\n",
+       "13        Bars, Pubs, Food, Cocktail Bars, Nightlife, Ci...\n",
+       "14        Desserts, American (New), Sandwiches, American...\n",
+       "15                                     Mexican, Restaurants\n",
+       "16        American (Traditional), American (New), Restau...\n",
+       "17                                       Karaoke, Nightlife\n",
+       "18                   Barbeque, Korean, Restaurants, Buffets\n",
+       "19        Seafood, Restaurants, American (Traditional), ...\n",
+       "20        Furniture Reupholstery, Sewing & Alterations, ...\n",
+       "21        Plus Size Fashion, Fashion, Formal Wear, Shopp...\n",
+       "22                               Beer, Wine & Spirits, Food\n",
+       "23                                      French, Restaurants\n",
+       "24        Bars, Nightlife, Sports Bars, Pubs, Restaurant...\n",
+       "25        Japanese, American (New), Restaurants, Noodles...\n",
+       "26               Seafood, Restaurants, Italian, Steakhouses\n",
+       "27                                     Mexican, Restaurants\n",
+       "28                                     Italian, Restaurants\n",
+       "29                        Sushi Bars, Restaurants, Japanese\n",
+       "                                ...                        \n",
+       "239970                             Food Stands, Restaurants\n",
+       "239971    Sandwiches, Breakfast & Brunch, Burgers, Ameri...\n",
+       "239972    Threading Services, Skin Care, Reiki, Waxing, ...\n",
+       "239973                      Restaurants, Burgers, Fast Food\n",
+       "239974                 Restaurants, Portuguese, Food, Cafes\n",
+       "239975      American (New), Restaurants, Breakfast & Brunch\n",
+       "239976                         Vegan, Restaurants, Southern\n",
+       "239977    Event Planning & Services, Arts & Entertainmen...\n",
+       "239978    Seafood, Restaurants, Steakhouses, American (New)\n",
+       "239979    Doctors, Physical Therapy, Sports Medicine, He...\n",
+       "239980    Diners, Restaurants, Breakfast & Brunch, Ameri...\n",
+       "239981         American (Traditional), Restaurants, Seafood\n",
+       "239982    Food, Bubble Tea, Ice Cream & Frozen Yogurt, C...\n",
+       "239983                                Tattoo, Beauty & Spas\n",
+       "239984                    Bakeries, Food, Coffee Roasteries\n",
+       "239985                       Delis, Sandwiches, Restaurants\n",
+       "239986    Local Services, Recycling Center, Home Service...\n",
+       "239987    Windshield Installation & Repair, Oil Change S...\n",
+       "239988                                   Pizza, Restaurants\n",
+       "239989    Caterers, Sandwiches, Restaurants, Food Delive...\n",
+       "239990                         Indian, Buffets, Restaurants\n",
+       "239991    Restaurants, Pizza, Nightlife, Beer, Wine & Sp...\n",
+       "239992                   Barbeque, Restaurants, Steakhouses\n",
+       "239993                                   Restaurants, Cafes\n",
+       "239994                              Vietnamese, Restaurants\n",
+       "239995                           Mediterranean, Restaurants\n",
+       "239996    Sports Bars, Restaurants, American (Traditiona...\n",
+       "239997    Chicken Shop, American (New), Restaurants, Chi...\n",
+       "239998    Caterers, Sandwiches, Restaurants, Food Delive...\n",
+       "239999                          Health & Medical, Hospitals\n",
+       "Name: business_categories, Length: 240000, dtype: object"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.business_categories"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 1000
+    },
+    "colab_type": "code",
+    "id": "NVx6eGnj3TIj",
+    "outputId": "da111248-d4ba-4cbd-e6ad-bc5ce3c04906"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "business_categories\n",
+       "3D Printing, Computers, Shopping, Printing Services, Local Services, Electronics                                                                                          1\n",
+       "3D Printing, Printing Services, Local Services                                                                                                                            1\n",
+       "ATV Rentals/Tours, Bike Rentals, Bikes, Active Life, Hotels & Travel, Parks, Sporting Goods, Tours, Shopping, Recreation Centers                                          1\n",
+       "ATV Rentals/Tours, Tours, Active Life, Hotels & Travel                                                                                                                    1\n",
+       "Acai Bowls, Ice Cream & Frozen Yogurt, Juice Bars & Smoothies, Gluten-Free, Food, Restaurants                                                                             2\n",
+       "Acai Bowls, Juice Bars & Smoothies, Ice Cream & Frozen Yogurt, Food                                                                                                       1\n",
+       "Acai Bowls, Macarons, Specialty Food, Shaved Ice, Ice Cream & Frozen Yogurt, Juice Bars & Smoothies, Food, Desserts                                                      10\n",
+       "Acai Bowls, Poke, Juice Bars & Smoothies, Gluten-Free, Food, Vegan, Restaurants                                                                                           5\n",
+       "Accessories, Arts & Crafts, Fashion, Art Supplies, Shopping, Jewelry, Knitting Supplies                                                                                   2\n",
+       "Accessories, Children's Clothing, Shoe Stores, Fashion, Shopping                                                                                                          1\n",
+       "Accessories, Children's Clothing, Shopping, Women's Clothing, Department Stores, Fashion, Men's Clothing                                                                  2\n",
+       "Accessories, Department Stores, Shopping, Fashion, Women's Clothing, Men's Clothing                                                                                       1\n",
+       "Accessories, Discount Store, Fashion, Shopping                                                                                                                            2\n",
+       "Accessories, Fashion, Jewelry, Shopping, Shoe Stores                                                                                                                      1\n",
+       "Accessories, Fashion, Leather Goods, Shopping                                                                                                                             1\n",
+       "Accessories, Fashion, Men's Clothing, Women's Clothing, Department Stores, Shopping                                                                                       3\n",
+       "Accessories, Fashion, Shoe Stores, Women's Clothing, Shopping                                                                                                             1\n",
+       "Accessories, Fashion, Shopping                                                                                                                                            6\n",
+       "Accessories, Fashion, Shopping, Bridal                                                                                                                                    1\n",
+       "Accessories, Fashion, Shopping, Jewelry                                                                                                                                   1\n",
+       "Accessories, Fashion, Shopping, Men's Clothing, Women's Clothing                                                                                                          2\n",
+       "Accessories, Fashion, Shopping, Outlet Stores                                                                                                                             1\n",
+       "Accessories, Fashion, Shopping, Personal Shopping, Horse Equipment Shops                                                                                                  1\n",
+       "Accessories, Fashion, Shopping, Shoe Stores                                                                                                                               1\n",
+       "Accessories, Fashion, Shopping, Women's Clothing                                                                                                                          5\n",
+       "Accessories, Fashion, Shopping, Women's Clothing, Men's Clothing, Department Stores                                                                                       3\n",
+       "Accessories, Fashion, Thrift Stores, Shopping                                                                                                                             2\n",
+       "Accessories, Fashion, Women's Clothing, Shopping                                                                                                                          4\n",
+       "Accessories, Flea Markets, Watches, Shopping, Fashion, Piercing, Local Services, Jewelry Repair, Beauty & Spas, Jewelry                                                   1\n",
+       "Accessories, Formal Wear, Shoe Stores, Men's Clothing, Fashion, Bridal, Shopping                                                                                          1\n",
+       "                                                                                                                                                                         ..\n",
+       "Yoga, Fitness & Instruction, Weight Loss Centers, Dance Studios, Health & Medical, Active Life                                                                            2\n",
+       "Yoga, Gyms, Active Life, Boxing, Dance Studios, Fitness & Instruction                                                                                                     2\n",
+       "Yoga, Gyms, Fitness & Instruction, Trainers, Active Life                                                                                                                  2\n",
+       "Yoga, Gyms, Sports Clubs, Trainers, Active Life, Fitness & Instruction                                                                                                    3\n",
+       "Yoga, Health & Medical, Active Life, Fitness & Instruction, Physical Therapy, Trainers                                                                                    1\n",
+       "Yoga, Health & Medical, Acupuncture, Fitness & Instruction, Chiropractors, Massage Therapy, Active Life, Massage, Beauty & Spas                                           1\n",
+       "Yoga, Health & Medical, Obstetricians & Gynecologists, Fitness & Instruction, Active Life, Doctors                                                                        1\n",
+       "Yoga, Lakes, Paddleboarding, Fitness & Instruction, Active Life, Rafting/Kayaking                                                                                         4\n",
+       "Yoga, Meditation Centers, Fitness & Instruction, Active Life                                                                                                              2\n",
+       "Yoga, Shopping, Fashion, Active Life, Sports Wear, Fitness & Instruction, Sporting Goods, Gyms                                                                            2\n",
+       "Yoga, Skin Care, Nutritionists, Health & Medical, Active Life, Fitness & Instruction, Massage Therapy, Aerial Fitness, Beauty & Spas                                      3\n",
+       "Yoga, Specialty Schools, Education, Surf Schools, Active Life, Sports Clubs, Fitness & Instruction, Boating, Beaches                                                      1\n",
+       "Yoga, Specialty Schools, Fitness & Instruction, Active Life, Education                                                                                                    3\n",
+       "Yoga, Specialty Schools, Fitness & Instruction, Education, Active Life                                                                                                    1\n",
+       "Yoga, Sports Clubs, Active Life, Gyms, Trainers, Fitness & Instruction                                                                                                    1\n",
+       "Yoga, Sports Clubs, Fitness & Instruction, Active Life, Trainers, Gyms                                                                                                    1\n",
+       "Yoga, Sports Clubs, Fitness & Instruction, Trainers, Active Life, Gyms                                                                                                    1\n",
+       "Yoga, Tai Chi, Education, Fitness & Instruction, Active Life, Adult Education                                                                                             1\n",
+       "Yoga, Traditional Chinese Medicine, Massage, Tai Chi, Trainers, Weight Loss Centers, Active Life, Acupuncture, Fitness & Instruction, Health & Medical, Beauty & Spas     2\n",
+       "Yoga, Trainers, Active Life, Fitness & Instruction, Gyms, Sports Clubs                                                                                                    1\n",
+       "Yoga, Trainers, Gyms, Active Life, Fitness & Instruction                                                                                                                  1\n",
+       "Yoga, Trainers, Sports Clubs, Fitness & Instruction, Active Life, Gyms                                                                                                    5\n",
+       "Ziplining, Active Life, Amusement Parks                                                                                                                                   8\n",
+       "Ziplining, Active Life, Kids Activities, Challenge Courses, Party & Event Planning, Event Planning & Services, Parks                                                      2\n",
+       "Zoos, Active Life                                                                                                                                                        30\n",
+       "Zoos, Active Life, Local Flavor                                                                                                                                           4\n",
+       "Zoos, Event Planning & Services, Food, Active Life, Hotels & Travel, Hotels, Beer, Wine & Spirits                                                                         4\n",
+       "Zoos, Leisure Centers, Active Life, Recreation Centers                                                                                                                    1\n",
+       "Zoos, Local Flavor, Active Life                                                                                                                                           5\n",
+       "Zoos, Parks, Active Life                                                                                                                                                  2\n",
+       "Length: 39818, dtype: int64"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.groupby('business_categories').size()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "QqoAyS_D3blH"
+   },
+   "outputs": [],
+   "source": [
+    "train['bizcategory1'] = train.business_categories.apply(lambda x: x.split(', ')[0] if type(x)==str else '---')\n",
+    "train['bizcategory2'] = ['---' if type(i)!=str else '---' if len(i.split(', '))==1 else i.split(', ')[1] for i in train.business_categories]\n",
+    "train['top2categories'] = train['bizcategory1'].str.cat(train['bizcategory2'], sep=' ')\n",
+    "top_categories = train.top2categories.value_counts()\n",
+    "top_categories = [k for k,v in top_categories.iteritems() if v > 100]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>...</th>\n",
+       "      <th>business_city</th>\n",
+       "      <th>business_latitude</th>\n",
+       "      <th>business_longitude</th>\n",
+       "      <th>business_review_count</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>business_state</th>\n",
+       "      <th>is_good_rating</th>\n",
+       "      <th>bizcategory1</th>\n",
+       "      <th>bizcategory2</th>\n",
+       "      <th>top2categories</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>9uu-JXdQuQ3rXOd1Vxv8kA</td>\n",
+       "      <td>8zN3nV0zbtE377_XhlvabA</td>\n",
+       "      <td>MWahC54Rd_CNv_0VtjCD6A</td>\n",
+       "      <td>2017-06-27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Pool tables, darts, and other neighborhood bar...</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Chandler</td>\n",
+       "      <td>33.336050</td>\n",
+       "      <td>-111.844343</td>\n",
+       "      <td>158</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>AZ</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Sports Bars</td>\n",
+       "      <td>Restaurants Sports Bars</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>UbCgugoTK2MfBmtU_8PXaQ</td>\n",
+       "      <td>wJ-PcjemwR44WitIJsDzsA</td>\n",
+       "      <td>N-GOto4b3ltfGJ7y-5g-pg</td>\n",
+       "      <td>2017-03-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>This place was alright. However, their classic...</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Fort Mill</td>\n",
+       "      <td>35.058040</td>\n",
+       "      <td>-80.937064</td>\n",
+       "      <td>26</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>SC</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Beauty &amp; Spas</td>\n",
+       "      <td>Nail Salons</td>\n",
+       "      <td>Beauty &amp; Spas Nail Salons</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6oF9_NR1O5Y_NOE6INXfrg</td>\n",
+       "      <td>fP4sMlVw_MvyGNv4xeTGDA</td>\n",
+       "      <td>RH3w77UyXaQPiOx2jOE7zg</td>\n",
+       "      <td>2017-07-14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>First time at Pieology Pizzeria and I was impr...</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Las Vegas</td>\n",
+       "      <td>36.114884</td>\n",
+       "      <td>-115.155604</td>\n",
+       "      <td>189</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Pizza</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Pizza Restaurants</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>kyYWrcrr83GnJ7m_VEvwCA</td>\n",
+       "      <td>hgWMxKhrnOUd3m5nOUBIkA</td>\n",
+       "      <td>g6pwf1E-CylnZQRoaZGGdw</td>\n",
+       "      <td>2010-12-13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Its a good facility with lots of equipment and...</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>2013, 2012</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Las Vegas</td>\n",
+       "      <td>36.025332</td>\n",
+       "      <td>-115.120852</td>\n",
+       "      <td>316</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Active Life</td>\n",
+       "      <td>Fitness &amp; Instruction</td>\n",
+       "      <td>Active Life Fitness &amp; Instruction</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>K2X3XG9_M3EM0TWguo2bCw</td>\n",
+       "      <td>KMKPusWbBaIORB669W0EeQ</td>\n",
+       "      <td>14nl002my6qLaEcqYHLPig</td>\n",
+       "      <td>2016-09-12</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Very very disappointed! My shawarma chicken wa...</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Henderson</td>\n",
+       "      <td>36.005901</td>\n",
+       "      <td>-115.111863</td>\n",
+       "      <td>61</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Mediterranean</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Mediterranean Restaurants</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 23 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                review_id             business_id                 user_id  \\\n",
+       "0  9uu-JXdQuQ3rXOd1Vxv8kA  8zN3nV0zbtE377_XhlvabA  MWahC54Rd_CNv_0VtjCD6A   \n",
+       "1  UbCgugoTK2MfBmtU_8PXaQ  wJ-PcjemwR44WitIJsDzsA  N-GOto4b3ltfGJ7y-5g-pg   \n",
+       "2  6oF9_NR1O5Y_NOE6INXfrg  fP4sMlVw_MvyGNv4xeTGDA  RH3w77UyXaQPiOx2jOE7zg   \n",
+       "3  kyYWrcrr83GnJ7m_VEvwCA  hgWMxKhrnOUd3m5nOUBIkA  g6pwf1E-CylnZQRoaZGGdw   \n",
+       "4  K2X3XG9_M3EM0TWguo2bCw  KMKPusWbBaIORB669W0EeQ  14nl002my6qLaEcqYHLPig   \n",
+       "\n",
+       "         date  cool  funny  useful  \\\n",
+       "0  2017-06-27     0      0       0   \n",
+       "1  2017-03-25     0      0       0   \n",
+       "2  2017-07-14     0      0       0   \n",
+       "3  2010-12-13     1      0       0   \n",
+       "4  2016-09-12     1      1       1   \n",
+       "\n",
+       "                                                text  user_average_stars  \\\n",
+       "0  Pool tables, darts, and other neighborhood bar...                2.00   \n",
+       "1  This place was alright. However, their classic...                4.43   \n",
+       "2  First time at Pieology Pizzeria and I was impr...                4.09   \n",
+       "3  Its a good facility with lots of equipment and...                3.55   \n",
+       "4  Very very disappointed! My shawarma chicken wa...                3.75   \n",
+       "\n",
+       "   user_elite  ...  business_city business_latitude business_longitude  \\\n",
+       "0        None  ...       Chandler         33.336050        -111.844343   \n",
+       "1        None  ...      Fort Mill         35.058040         -80.937064   \n",
+       "2        None  ...      Las Vegas         36.114884        -115.155604   \n",
+       "3  2013, 2012  ...      Las Vegas         36.025332        -115.120852   \n",
+       "4        None  ...      Henderson         36.005901        -115.111863   \n",
+       "\n",
+       "  business_review_count  business_average_stars  business_state  \\\n",
+       "0                   158                     4.0              AZ   \n",
+       "1                    26                     3.5              SC   \n",
+       "2                   189                     4.0              NV   \n",
+       "3                   316                     3.0              NV   \n",
+       "4                    61                     3.5              NV   \n",
+       "\n",
+       "   is_good_rating   bizcategory1           bizcategory2  \\\n",
+       "0               0    Restaurants            Sports Bars   \n",
+       "1               0  Beauty & Spas            Nail Salons   \n",
+       "2               1          Pizza            Restaurants   \n",
+       "3               0    Active Life  Fitness & Instruction   \n",
+       "4               0  Mediterranean            Restaurants   \n",
+       "\n",
+       "                      top2categories  \n",
+       "0            Restaurants Sports Bars  \n",
+       "1          Beauty & Spas Nail Salons  \n",
+       "2                  Pizza Restaurants  \n",
+       "3  Active Life Fitness & Instruction  \n",
+       "4          Mediterranean Restaurants  \n",
+       "\n",
+       "[5 rows x 23 columns]"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "DDlKmuEP0lkC",
+    "outputId": "35a85ea1-14b1-4457-b4ee-0bb9602a01a4"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "11028"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(train.top2categories.unique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "AR-NFpEE06aa",
+    "outputId": "73614579-23dc-478f-ec1c-ffce8dec470f"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1008"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(train.bizcategory1.unique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "vd1uq9sY1IDL",
+    "outputId": "f1a82b95-a731-4155-e7da-a71d73f70fee"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1016"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(train.bizcategory2.unique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 74
+    },
+    "colab_type": "code",
+    "id": "HFiAd87pCRoO",
+    "outputId": "932d3aba-c598-4c14-c02e-36159a71892d",
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['Mexican Restaurants', 'Restaurants Mexican', 'Italian Restaurants', 'American (New) Restaurants', 'Pizza Restaurants', 'Restaurants Pizza', 'Restaurants Italian', 'Chinese Restaurants', 'Restaurants Chinese', 'Restaurants American (New)', 'Restaurants American (Traditional)', 'Breakfast & Brunch Restaurants', 'Restaurants Breakfast & Brunch', 'American (Traditional) Restaurants', 'Bars Nightlife', 'Nightlife Bars', 'Restaurants Burgers', 'Coffee & Tea Food', 'Food Coffee & Tea', 'Restaurants Food', 'Japanese Restaurants', 'Restaurants Japanese', 'Restaurants Bars', 'Restaurants Nightlife', 'Restaurants Sandwiches', 'Restaurants Thai', 'Sandwiches Restaurants', 'Restaurants Sushi Bars', 'Burgers Restaurants', 'Steakhouses Restaurants', 'Sushi Bars Restaurants', 'Food Restaurants', 'Restaurants Steakhouses', 'Nail Salons Beauty & Spas', 'Thai Restaurants', 'Beauty & Spas Nail Salons', 'Restaurants Seafood', 'Bars Restaurants', 'Restaurants Vietnamese', 'Nightlife Restaurants', 'Hotels Event Planning & Services', 'Seafood Restaurants', 'Restaurants Fast Food', 'Buffets Restaurants', 'Fast Food Restaurants', 'Food Ice Cream & Frozen Yogurt', 'Ice Cream & Frozen Yogurt Food', 'Beauty & Spas Hair Salons', 'Vietnamese Restaurants', 'Sushi Bars Japanese', 'Arts & Entertainment Performing Arts', 'Asian Fusion Restaurants', 'Restaurants Barbeque', 'Beer Wine & Spirits', 'Food Bakeries', 'Hair Salons Beauty & Spas', 'Bakeries Food', 'Japanese Sushi Bars', 'Automotive Auto Repair', 'Restaurants Indian', 'Barbeque Restaurants', 'Mediterranean Restaurants', 'Indian Restaurants', 'American (Traditional) Burgers', 'Restaurants Asian Fusion', 'Auto Repair Automotive', 'Salad Restaurants', 'Restaurants Diners', 'Pizza Italian', 'Food Desserts', 'Korean Restaurants', 'Restaurants Korean', 'Performing Arts Arts & Entertainment', 'Restaurants Mediterranean', 'Restaurants Salad', 'Restaurants Cafes', 'Event Planning & Services Hotels & Travel', 'Hotels & Travel Event Planning & Services', 'American (Traditional) Breakfast & Brunch', 'Hotels Hotels & Travel', 'Hotels & Travel Airports', 'Bars American (Traditional)', 'American (New) Bars', 'Cafes Restaurants', 'French Restaurants', 'Hotels & Travel Hotels', 'Event Planning & Services Arts & Entertainment', 'Food Grocery', 'Italian Pizza', 'Arts & Entertainment Cinema', 'Desserts Food', 'Grocery Food', 'Vegetarian Restaurants', 'Restaurants Buffets', 'Automotive Car Dealers', 'Car Rental Hotels & Travel', 'Event Planning & Services Hotels', 'Hotels Casinos', 'Chicken Wings Restaurants', 'Breakfast & Brunch American (New)', 'Nightlife Dance Clubs', 'Restaurants French', 'Diners Restaurants', 'French Steakhouses', 'Hotels & Travel Car Rental', 'Restaurants Greek', 'Casinos Hotels', 'Fashion Shopping', 'Car Dealers Automotive', 'Sandwiches Buffets', 'Doctors Health & Medical', 'Beauty & Spas Barbers', 'Buffets Breakfast & Brunch', 'American (Traditional) Bars', 'Barbers Beauty & Spas', 'Veterinarians Pets', 'Specialty Food Food', 'Cinema Arts & Entertainment', 'Food Breakfast & Brunch', 'Food Beer', 'Breakfast & Brunch Food', 'Day Spas Beauty & Spas', 'Bars Lounges', 'Sandwiches Pizza', 'Coffee & Tea Restaurants', 'Health & Medical Doctors', 'Noodles Restaurants', 'Hotels Arts & Entertainment', 'Restaurants Coffee & Tea', 'Event Planning & Services Venues & Event Spaces', 'Restaurants Gastropubs', 'Restaurants Noodles', 'American (New) American (Traditional)', 'Caterers Sandwiches', 'Arts & Entertainment Event Planning & Services', 'Greek Restaurants', 'Food Specialty Food', 'Nightlife American (New)', 'Restaurants Chicken Wings', 'Automotive Oil Change Stations', 'Restaurants Middle Eastern', 'Pets Veterinarians', 'Shopping Fashion', 'American (New) Nightlife', 'Restaurants Canadian (New)', 'Restaurants Arts & Entertainment', 'Asian Fusion Japanese', 'Restaurants Delis', 'Burgers American (Traditional)', 'Bars Pubs', 'Real Estate Home Services', 'Home Services Real Estate', 'Restaurants Desserts', 'American (Traditional) Nightlife', 'Auto Repair Car Dealers', 'Bars Sports Bars', 'Bakeries Restaurants', 'Food Juice Bars & Smoothies', 'Skin Care Beauty & Spas', 'Casinos Arts & Entertainment', 'American (New) Breakfast & Brunch', 'Restaurants Vegetarian', 'Breakfast & Brunch American (Traditional)', 'Restaurants Wine Bars', 'Arts & Entertainment Hotels', 'Asian Fusion Chinese', 'Burgers Fast Food', 'Desserts Restaurants', 'Heating & Air Conditioning/HVAC Home Services', 'Shopping Centers Shopping', 'Middle Eastern Restaurants', 'American (Traditional) Seafood', 'Pubs Bars', 'Fast Food Burgers', 'Beauty & Spas Day Spas', 'Restaurants Caribbean', 'Nightlife American (Traditional)', 'American (New) Sandwiches', 'Juice Bars & Smoothies Food', 'Canadian (New) Restaurants', 'Gastropubs Restaurants', 'Caterers Event Planning & Services', 'Event Planning & Services Caterers', 'Casinos Event Planning & Services', 'Cafes Food', 'Automotive Auto Parts & Supplies', 'Automotive Car Wash', 'Beauty & Spas Hair Removal', 'Latin American Restaurants', 'Cajun/Creole Restaurants', 'Restaurants Latin American', 'Hotels & Travel Arts & Entertainment', 'Delis Restaurants', 'Parks Active Life', 'Donuts Food', 'Car Wash Automotive', 'Bars Food', 'Music Venues Nightlife', 'Food Sandwiches', 'Breakfast & Brunch Diners', 'Nightlife Pubs', 'Food American (New)', 'New Mexican Cuisine Mexican', 'Nightlife Food', 'Hawaiian Restaurants', 'Burgers American (New)', 'Restaurants Hot Dogs', 'Bars Arts & Entertainment', 'Shopping Home & Garden', 'Dentists Health & Medical', 'Landmarks & Historical Buildings Public Services & Government', 'Breakfast & Brunch Venues & Event Spaces', 'Nightlife Sports Bars', 'Car Dealers Thai', 'Home Services Heating & Air Conditioning/HVAC', 'Diners Breakfast & Brunch', 'Massage Beauty & Spas', 'Bars American (New)', 'Home Services Apartments', 'Active Life Fitness & Instruction', 'Books Mags', 'Museums Arts & Entertainment', 'Cocktail Bars Bars', 'Auto Parts & Supplies Automotive', 'American (Traditional) American (New)', 'Venues & Event Spaces Event Planning & Services', 'Beauty & Spas Massage', 'Pubs Nightlife', 'Resorts Hotels & Travel', 'Vegan Vegetarian', 'Dance Clubs Nightlife', 'Restaurants Vegan', 'Sports Bars Bars', 'Home Services Movers', 'Fitness & Instruction Active Life', 'Food Breweries', 'Social Clubs Arts & Entertainment', 'American (New) Burgers', 'Food Donuts', 'Local Services Pest Control', 'Restaurants Soul Food', 'Nightlife Adult Entertainment', 'Sports Bars Nightlife', 'Barbeque Korean', 'Restaurants Event Planning & Services', 'Home & Garden Shopping', 'Arts & Entertainment Casinos', 'Coffee & Tea Cafes', 'Apartments Home Services', 'Lounges Bars', 'Event Planning & Services Restaurants', 'Restaurants Soup', 'Restaurants Gluten-Free', 'Hair Removal Beauty & Spas', 'Restaurants Cocktail Bars', 'Nightlife Wine Bars', 'Breakfast & Brunch Coffee & Tea', 'Chinese Dim Sum', 'Lounges Nightlife', 'Active Life Parks', 'Mediterranean Greek', 'Apartments Real Estate', 'Food Cafes', 'Hotels & Travel Transportation', 'Bars Wine Bars', 'Bars Mexican', 'Pest Control Local Services', 'Restaurants Bakeries', 'Mexican Fast Food', 'Restaurants Hawaiian', 'Beauty & Spas Skin Care', 'Pet Services Pets', 'Vegan Restaurants', 'Sports Bars Restaurants', 'Hot Dogs Restaurants', 'Burgers Nightlife', 'Fast Food Mexican', 'Vietnamese Chinese', 'Restaurants Sports Bars', 'Soup Restaurants', 'Shopping Shopping Centers', 'Sandwiches Italian', 'Restaurants Tex-Mex', 'Mexican Tacos', 'Bars Breakfast & Brunch', 'Cocktail Bars Nightlife', 'Sandwiches Breakfast & Brunch', 'Sandwiches American (New)', 'Nightlife Mexican', 'Mediterranean Middle Eastern', 'Italian Nightlife', 'Bars Cocktail Bars', 'Sandwiches Delis', 'Steakhouses Nightlife', 'Sandwiches Salad', 'Bars Seafood', 'Food Ethnic Food', 'Restaurants Tapas/Small Plates', 'Health & Medical Dentists', 'Pets Pet Services', 'Home Services Plumbing', 'Sandwiches Food', 'Restaurants Southern', 'Car Dealers Auto Repair', 'American (New) Food', 'Transportation Hotels & Travel', 'Automotive Tires', '--- ---', 'Real Estate Apartments', 'Beauty & Spas Tattoo', 'Arts & Entertainment Museums', 'Tattoo Beauty & Spas', 'Beauty & Spas Eyelash Service', 'Soul Food Restaurants', 'Hotels & Travel Casinos', 'Southern Restaurants', 'Tex-Mex Restaurants', 'Steakhouses American (Traditional)', 'Steakhouses Seafood', 'Financial Services Banks & Credit Unions', 'Breweries Food', 'Contractors Home Services', 'Breakfast & Brunch Sandwiches', 'Auto Repair Oil Change Stations', 'Tires Automotive', 'Movers Home Services', 'Plumbing Home Services', 'Waxing Hair Removal', 'Comfort Food Restaurants', 'Pizza Food', 'Chiropractors Health & Medical', 'Tex-Mex Mexican', 'Wine Bars Bars', 'Desserts American (New)', 'Seafood Bars', 'Pets Pet Stores', 'Pet Stores Pets', 'Beauty & Spas Hotels', 'American (Traditional) Buffets', 'Cafes Breakfast & Brunch', 'Breakfast & Brunch Southern', 'Nightlife Cocktail Bars', 'Sandwiches American (Traditional)', 'Gyms Fitness & Instruction', 'Food Nightlife', 'Restaurants Cajun/Creole', 'Caterers Restaurants', 'Seafood American (New)', 'Jewelry Shopping', 'Beauty & Spas Waxing', 'Bars Barbeque', 'Food American (Traditional)', 'Nightlife Lounges', 'Middle Eastern Mediterranean', 'Specialty Food Sandwiches', 'Shopping Drugstores', 'Music Venues Arts & Entertainment', 'Restaurants Comfort Food', 'Bakeries Desserts', 'General Dentistry Health & Medical', 'Desserts Ice Cream & Frozen Yogurt', 'Mexican Nightlife', 'Indian Buffets', 'Food Cocktail Bars', 'Caribbean Restaurants', 'Tea Rooms Food', 'Stadiums & Arenas Arts & Entertainment', 'Department Stores Shopping', 'Oil Change Stations Automotive', 'Gyms Active Life', 'Pet Groomers Pet Services', 'Restaurants Pubs', 'Tires Auto Repair', 'Pet Groomers Pets', 'Shopping Jewelry', 'Dim Sum Chinese', 'Vegetarian Nightlife', 'Drugstores Shopping', 'Restaurants Ramen', 'Casinos Hotels & Travel', 'Vegan Pizza', 'Delis Sandwiches', 'Vegetarian Vegan', 'Beauty & Spas Shopping', 'Greek Mediterranean', 'Department Stores Fashion', 'Restaurants Creperies', 'Gluten-Free Restaurants', 'Arts & Entertainment Nightlife', 'Cocktail Bars Restaurants', 'Hair Salons Nail Salons', 'Health & Medical Medical Centers', 'Waxing Beauty & Spas', 'Nail Salons Day Spas', 'Tanning Beauty & Spas', 'Filipino Restaurants', 'Banks & Credit Unions Financial Services', \"Women's Clothing Shopping\", 'Steakhouses American (New)']\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(top_categories)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "rYL-khhQC8_Z",
+    "outputId": "8793c165-42f4-4f71-f159-a2308768f31f"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "399\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(top_categories))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "gDyE75vQDb9f",
+    "outputId": "5439adbf-3218-4a54-d534-bf67d21ed9d0"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    33.336050\n",
+       "1    35.058040\n",
+       "2    36.114884\n",
+       "3    36.025332\n",
+       "4    36.005901\n",
+       "Name: business_latitude, dtype: float64"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# print(train.business_latitude.str.cat(train.business_longitude, sep=' '))\n",
+    "train.business_latitude.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "dw02h9Z9WpTJ",
+    "outputId": "30f61e0c-7600-4c4d-dc57-e1e9699f0369"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0   -111.844343\n",
+       "1    -80.937064\n",
+       "2   -115.155604\n",
+       "3   -115.120852\n",
+       "4   -115.111863\n",
+       "Name: business_longitude, dtype: float64"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.business_longitude.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "gBP_xenAgtzm"
+   },
+   "outputs": [],
+   "source": [
+    "# looked up the midpoint of the united states\n",
+    "middle_lat = 39.8333333\n",
+    "middle_lon = -98.585522\n",
+    "\n",
+    "# compare with longitude latitude of the business to classify as northwest, northeast, southwest, southeast\n",
+    "def find_region(business_lat, business_lon):\n",
+    "  if np.isnan(business_lat) or np.isnan(business_lon):\n",
+    "    return np.nan\n",
+    "  if business_lat > middle_lat:\n",
+    "    if business_lon > middle_lon:\n",
+    "      return \"North East\"\n",
+    "    return \"North West\"\n",
+    "  if business_lon > middle_lon:\n",
+    "    return \"South East\"\n",
+    "  return \"South West\"\n",
+    "business_region = [find_region(x,y) for x,y in zip(train.business_latitude.values, train.business_longitude.values)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 187
+    },
+    "colab_type": "code",
+    "id": "byikyj3ljBDT",
+    "outputId": "6899cf68-5b77-4062-8efe-51bbacc6cdfc"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['South West',\n",
+       " 'South East',\n",
+       " 'South West',\n",
+       " 'South West',\n",
+       " 'South West',\n",
+       " 'South West',\n",
+       " 'South West',\n",
+       " 'North East',\n",
+       " 'South West',\n",
+       " 'South West']"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "business_region[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 204
+    },
+    "colab_type": "code",
+    "id": "U4LbFiQdjj-h",
+    "outputId": "d6c593f3-f8c6-47c9-c0fb-9aba474f8456"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    AZ\n",
+       "1    SC\n",
+       "2    NV\n",
+       "3    NV\n",
+       "4    NV\n",
+       "5    AZ\n",
+       "6    NV\n",
+       "7    ON\n",
+       "8    NV\n",
+       "9    AZ\n",
+       "Name: business_state, dtype: object"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.business_state[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 646
+    },
+    "colab_type": "code",
+    "id": "70XNXe23zfEl",
+    "outputId": "cd88831a-843d-4341-a45d-17f1f812e768"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "NV     83236\n",
+       "AZ     75484\n",
+       "ON     27832\n",
+       "NC     14146\n",
+       "OH     12288\n",
+       "PA     10034\n",
+       "QC      6148\n",
+       "WI      4968\n",
+       "EDH     2255\n",
+       "IL      1419\n",
+       "BW      1361\n",
+       "SC       450\n",
+       "HLD       99\n",
+       "MLN       98\n",
+       "CHE       34\n",
+       "NYK       33\n",
+       "FL        28\n",
+       "FIF       19\n",
+       "WLN       12\n",
+       "ESX       12\n",
+       "ELN        7\n",
+       "C          7\n",
+       "NY         6\n",
+       "GLG        4\n",
+       "XGL        3\n",
+       "NI         3\n",
+       "AK         2\n",
+       "01         2\n",
+       "ABE        2\n",
+       "AR         2\n",
+       "TAM        1\n",
+       "B          1\n",
+       "CA         1\n",
+       "KHL        1\n",
+       "IN         1\n",
+       "FAL        1\n",
+       "Name: business_state, dtype: int64"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.business_state.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "nlZGeEKCzq4I"
+   },
+   "outputs": [],
+   "source": [
+    "# state codes are not unified, also this data seems to be coming from a bunch of different places, not just the united states"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 204
+    },
+    "colab_type": "code",
+    "id": "tL07vjOIjnih",
+    "outputId": "446a51ce-beb9-4e6f-8a4d-274940c494a0"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0           Chandler\n",
+       "1          Fort Mill\n",
+       "2          Las Vegas\n",
+       "3          Las Vegas\n",
+       "4          Henderson\n",
+       "5           Chandler\n",
+       "6          Las Vegas\n",
+       "7            Toronto\n",
+       "8    North Las Vegas\n",
+       "9           Chandler\n",
+       "Name: business_city, dtype: object"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.business_city[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "xCriyzMIjyJC"
+   },
+   "outputs": [],
+   "source": [
+    "# judging from the Toronto, ON entry, there are canadian businesses in this data???\n",
+    "train['business_region'] = business_region"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 170
+    },
+    "colab_type": "code",
+    "id": "lbWa7Wboxv1q",
+    "outputId": "eafc7f6d-e8f5-4a82-d438-db5b0dd99d28"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "business_region  is_good_rating\n",
+       "North East       0                  23739\n",
+       "                 1                  42871\n",
+       "North West       1                      1\n",
+       "South East       0                   4978\n",
+       "                 1                   9685\n",
+       "South West       0                  51424\n",
+       "                 1                 107300\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.groupby(['business_region', 'is_good_rating']).size()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 222
+    },
+    "colab_type": "code",
+    "id": "FfTpxUlQx0d7",
+    "outputId": "1f5be292-4791-48ea-89c3-574e582c7d55"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>...</th>\n",
+       "      <th>business_latitude</th>\n",
+       "      <th>business_longitude</th>\n",
+       "      <th>business_review_count</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>business_state</th>\n",
+       "      <th>is_good_rating</th>\n",
+       "      <th>bizcategory1</th>\n",
+       "      <th>bizcategory2</th>\n",
+       "      <th>top2categories</th>\n",
+       "      <th>business_region</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>182361</th>\n",
+       "      <td>sbYPqcFihGOpZYZdfjLMng</td>\n",
+       "      <td>0MAubmdZUjeCHlqy5nMuDw</td>\n",
+       "      <td>VkyZgMTwfr3RalQLvKglLQ</td>\n",
+       "      <td>2016-02-09</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>I had Ray repair 4 different spots that my dog...</td>\n",
+       "      <td>4.2</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>47.308661</td>\n",
+       "      <td>-122.397206</td>\n",
+       "      <td>14</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>AZ</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Flooring</td>\n",
+       "      <td>Carpet Cleaning</td>\n",
+       "      <td>Flooring Carpet Cleaning</td>\n",
+       "      <td>North West</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>1 rows × 24 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                     review_id             business_id  \\\n",
+       "182361  sbYPqcFihGOpZYZdfjLMng  0MAubmdZUjeCHlqy5nMuDw   \n",
+       "\n",
+       "                       user_id        date  cool  funny  useful  \\\n",
+       "182361  VkyZgMTwfr3RalQLvKglLQ  2016-02-09     0      0       0   \n",
+       "\n",
+       "                                                     text  user_average_stars  \\\n",
+       "182361  I had Ray repair 4 different spots that my dog...                 4.2   \n",
+       "\n",
+       "       user_elite  ...  business_latitude business_longitude  \\\n",
+       "182361       None  ...          47.308661        -122.397206   \n",
+       "\n",
+       "       business_review_count business_average_stars  business_state  \\\n",
+       "182361                    14                    5.0              AZ   \n",
+       "\n",
+       "        is_good_rating  bizcategory1     bizcategory2  \\\n",
+       "182361               1      Flooring  Carpet Cleaning   \n",
+       "\n",
+       "                  top2categories  business_region  \n",
+       "182361  Flooring Carpet Cleaning       North West  \n",
+       "\n",
+       "[1 rows x 24 columns]"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# clearly some of the regions are incorrect, AZ should not be in the north west\n",
+    "train[train.business_region=='North West']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "J0xfsDizz1ZR"
+   },
+   "outputs": [],
+   "source": [
+    "# this probably indicates that we should not use business_region or business_state as a feature\n",
+    "# might need to think of other features that are more consistent or informative"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "wf9PxFjDvdMM"
+   },
+   "outputs": [],
+   "source": [
+    "train['business_total_stars'] = train.business_review_count * train.business_average_stars"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "vu0e1EN_kEDN",
+    "outputId": "61014d78-916d-429d-c27d-2cb48b9287b5"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0          None\n",
+      "1          None\n",
+      "2          None\n",
+      "3    2013, 2012\n",
+      "4          None\n",
+      "Name: user_elite, dtype: object\n"
+     ]
+    }
+   ],
+   "source": [
+    "user_stats = ['user_average_stars', 'user_elite', 'user_review_count', 'user_yelping_since']\n",
+    "print(train.user_elite.head())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "PyA-fXElkSuH",
+    "outputId": "39b4e087-9588-4b04-ece9-4ebb83faa261"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    0\n",
+       "1    0\n",
+       "2    0\n",
+       "3    2\n",
+       "4    0\n",
+       "Name: user_elite, dtype: int64"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "elite_count = train.user_elite.apply(lambda x: 0 if x=='None' else len(x.split(', ')))\n",
+    "elite_count.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "tXoZobfYkhkm",
+    "outputId": "c4ce43e2-d42d-4488-c074-994dbbf6f668"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "12"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "elite_count.max()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "OMa5j_j5k4H-",
+    "outputId": "1d9c59ca-4b53-4bf0-be24-fbf0ebf6194f"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    2013-10-23\n",
+       "1    2016-07-04\n",
+       "2    2013-09-05\n",
+       "3    2010-09-03\n",
+       "4    2016-03-24\n",
+       "Name: user_yelping_since, dtype: object"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.user_yelping_since.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "qV-IxruKlAIJ",
+    "outputId": "0294e954-4149-4545-960f-01bc5dc6b4ef"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0   2013-10-23\n",
+       "1   2016-07-04\n",
+       "2   2013-09-05\n",
+       "3   2010-09-03\n",
+       "4   2016-03-24\n",
+       "Name: user_yelping_since, dtype: datetime64[ns]"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "user_yelping_since = pd.to_datetime(train.user_yelping_since)\n",
+    "user_yelping_since.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "3phwFh3UlSfq",
+    "outputId": "fdcb24c5-6f19-4cdc-a8b5-551fd5ae2492"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0     5\n",
+       "1     7\n",
+       "2    21\n",
+       "3    83\n",
+       "4    28\n",
+       "Name: user_review_count, dtype: int64"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.user_review_count.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "kUHZUa8-lY2s",
+    "outputId": "b9ba122b-3bc3-465c-a48c-45343d5e20a1"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    2178\n",
+       "1    1193\n",
+       "2    2226\n",
+       "3    3324\n",
+       "4    1295\n",
+       "Name: user_yelping_since, dtype: int64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# some reviewers have not been \"active\" -- very few reviews since they started yelping, whereas others have been active or elite\n",
+    "user_days_on_yelp = (pd.datetime.now()-user_yelping_since).dt.days\n",
+    "user_days_on_yelp.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "SuQXffsDl473",
+    "outputId": "bf45e6b3-04e6-4004-b11a-0258268c18a0"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    0.002296\n",
+       "1    0.005868\n",
+       "2    0.009434\n",
+       "3    0.024970\n",
+       "4    0.021622\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "user_reviews_per_day = train.user_review_count / user_days_on_yelp\n",
+    "user_reviews_per_day.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 550
+    },
+    "colab_type": "code",
+    "id": "3DhIiRAMmNEf",
+    "outputId": "2be81bbb-3fb8-4244-d71b-e3faa1ffa052"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>...</th>\n",
+       "      <th>business_state</th>\n",
+       "      <th>is_good_rating</th>\n",
+       "      <th>bizcategory1</th>\n",
+       "      <th>bizcategory2</th>\n",
+       "      <th>top2categories</th>\n",
+       "      <th>business_region</th>\n",
+       "      <th>business_total_stars</th>\n",
+       "      <th>user_days_on_yelp</th>\n",
+       "      <th>user_reviews_per_day</th>\n",
+       "      <th>user_times_elite</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>9uu-JXdQuQ3rXOd1Vxv8kA</td>\n",
+       "      <td>8zN3nV0zbtE377_XhlvabA</td>\n",
+       "      <td>MWahC54Rd_CNv_0VtjCD6A</td>\n",
+       "      <td>2017-06-27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Pool tables, darts, and other neighborhood bar...</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>AZ</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Sports Bars</td>\n",
+       "      <td>Restaurants Sports Bars</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>632.0</td>\n",
+       "      <td>2178</td>\n",
+       "      <td>0.002296</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>UbCgugoTK2MfBmtU_8PXaQ</td>\n",
+       "      <td>wJ-PcjemwR44WitIJsDzsA</td>\n",
+       "      <td>N-GOto4b3ltfGJ7y-5g-pg</td>\n",
+       "      <td>2017-03-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>This place was alright. However, their classic...</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>SC</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Beauty &amp; Spas</td>\n",
+       "      <td>Nail Salons</td>\n",
+       "      <td>Beauty &amp; Spas Nail Salons</td>\n",
+       "      <td>South East</td>\n",
+       "      <td>91.0</td>\n",
+       "      <td>1193</td>\n",
+       "      <td>0.005868</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6oF9_NR1O5Y_NOE6INXfrg</td>\n",
+       "      <td>fP4sMlVw_MvyGNv4xeTGDA</td>\n",
+       "      <td>RH3w77UyXaQPiOx2jOE7zg</td>\n",
+       "      <td>2017-07-14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>First time at Pieology Pizzeria and I was impr...</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Pizza</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Pizza Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>756.0</td>\n",
+       "      <td>2226</td>\n",
+       "      <td>0.009434</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>kyYWrcrr83GnJ7m_VEvwCA</td>\n",
+       "      <td>hgWMxKhrnOUd3m5nOUBIkA</td>\n",
+       "      <td>g6pwf1E-CylnZQRoaZGGdw</td>\n",
+       "      <td>2010-12-13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Its a good facility with lots of equipment and...</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>2013, 2012</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Active Life</td>\n",
+       "      <td>Fitness &amp; Instruction</td>\n",
+       "      <td>Active Life Fitness &amp; Instruction</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>948.0</td>\n",
+       "      <td>3324</td>\n",
+       "      <td>0.024970</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>K2X3XG9_M3EM0TWguo2bCw</td>\n",
+       "      <td>KMKPusWbBaIORB669W0EeQ</td>\n",
+       "      <td>14nl002my6qLaEcqYHLPig</td>\n",
+       "      <td>2016-09-12</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Very very disappointed! My shawarma chicken wa...</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NV</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Mediterranean</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Mediterranean Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>213.5</td>\n",
+       "      <td>1295</td>\n",
+       "      <td>0.021622</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 28 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                review_id             business_id                 user_id  \\\n",
+       "0  9uu-JXdQuQ3rXOd1Vxv8kA  8zN3nV0zbtE377_XhlvabA  MWahC54Rd_CNv_0VtjCD6A   \n",
+       "1  UbCgugoTK2MfBmtU_8PXaQ  wJ-PcjemwR44WitIJsDzsA  N-GOto4b3ltfGJ7y-5g-pg   \n",
+       "2  6oF9_NR1O5Y_NOE6INXfrg  fP4sMlVw_MvyGNv4xeTGDA  RH3w77UyXaQPiOx2jOE7zg   \n",
+       "3  kyYWrcrr83GnJ7m_VEvwCA  hgWMxKhrnOUd3m5nOUBIkA  g6pwf1E-CylnZQRoaZGGdw   \n",
+       "4  K2X3XG9_M3EM0TWguo2bCw  KMKPusWbBaIORB669W0EeQ  14nl002my6qLaEcqYHLPig   \n",
+       "\n",
+       "         date  cool  funny  useful  \\\n",
+       "0  2017-06-27     0      0       0   \n",
+       "1  2017-03-25     0      0       0   \n",
+       "2  2017-07-14     0      0       0   \n",
+       "3  2010-12-13     1      0       0   \n",
+       "4  2016-09-12     1      1       1   \n",
+       "\n",
+       "                                                text  user_average_stars  \\\n",
+       "0  Pool tables, darts, and other neighborhood bar...                2.00   \n",
+       "1  This place was alright. However, their classic...                4.43   \n",
+       "2  First time at Pieology Pizzeria and I was impr...                4.09   \n",
+       "3  Its a good facility with lots of equipment and...                3.55   \n",
+       "4  Very very disappointed! My shawarma chicken wa...                3.75   \n",
+       "\n",
+       "   user_elite  ...  business_state is_good_rating   bizcategory1  \\\n",
+       "0        None  ...              AZ              0    Restaurants   \n",
+       "1        None  ...              SC              0  Beauty & Spas   \n",
+       "2        None  ...              NV              1          Pizza   \n",
+       "3  2013, 2012  ...              NV              0    Active Life   \n",
+       "4        None  ...              NV              0  Mediterranean   \n",
+       "\n",
+       "            bizcategory2                     top2categories  business_region  \\\n",
+       "0            Sports Bars            Restaurants Sports Bars       South West   \n",
+       "1            Nail Salons          Beauty & Spas Nail Salons       South East   \n",
+       "2            Restaurants                  Pizza Restaurants       South West   \n",
+       "3  Fitness & Instruction  Active Life Fitness & Instruction       South West   \n",
+       "4            Restaurants          Mediterranean Restaurants       South West   \n",
+       "\n",
+       "   business_total_stars  user_days_on_yelp user_reviews_per_day  \\\n",
+       "0                 632.0               2178             0.002296   \n",
+       "1                  91.0               1193             0.005868   \n",
+       "2                 756.0               2226             0.009434   \n",
+       "3                 948.0               3324             0.024970   \n",
+       "4                 213.5               1295             0.021622   \n",
+       "\n",
+       "   user_times_elite  \n",
+       "0                 0  \n",
+       "1                 0  \n",
+       "2                 0  \n",
+       "3                 2  \n",
+       "4                 0  \n",
+       "\n",
+       "[5 rows x 28 columns]"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['user_days_on_yelp'] = user_days_on_yelp\n",
+    "train['user_yelping_since'] = user_yelping_since\n",
+    "train['user_reviews_per_day'] = user_reviews_per_day\n",
+    "train['user_times_elite'] = elite_count\n",
+    "train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "MpDiauesmpUZ",
+    "outputId": "d6dc25fd-fcfe-4981-abd8-0201f0fe6251"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0   2017-06-27\n",
+       "1   2017-03-25\n",
+       "2   2017-07-14\n",
+       "3   2010-12-13\n",
+       "4   2016-09-12\n",
+       "Name: date, dtype: datetime64[ns]"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.date = pd.to_datetime(train.date)\n",
+    "train.date.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 68
+    },
+    "colab_type": "code",
+    "id": "i-MDU7xinBEN",
+    "outputId": "b3e403b0-f6c8-42da-d113-acc4ffa22d33"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    194072\n",
+       "1     45928\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "authored_by_elite_user = [1 if x in y else 0 for x,y in zip(train.date.dt.strftime('%Y'),train.user_elite)]\n",
+    "authored_by_elite_user = pd.Series(authored_by_elite_user)\n",
+    "authored_by_elite_user.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "39U9dsipnSIE"
+   },
+   "outputs": [],
+   "source": [
+    "train['authored_by_elite_user'] = authored_by_elite_user"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "FSvrB5HTnvIZ",
+    "outputId": "5a036aa3-d527-48f4-adc0-7c274d46151d"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    2.00\n",
+       "1    4.43\n",
+       "2    4.09\n",
+       "3    3.55\n",
+       "4    3.75\n",
+       "Name: user_average_stars, dtype: float64"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.user_average_stars.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 170
+    },
+    "colab_type": "code",
+    "id": "1OH7f1K0pNob",
+    "outputId": "ec90b364-d640-4c82-be6c-f63fbedd7adc"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    240000.000000\n",
+       "mean          3.750624\n",
+       "std           0.794099\n",
+       "min           1.000000\n",
+       "25%           3.420000\n",
+       "50%           3.820000\n",
+       "75%           4.200000\n",
+       "max           5.000000\n",
+       "Name: user_average_stars, dtype: float64"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.user_average_stars.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 119
+    },
+    "colab_type": "code",
+    "id": "Jfl_sBhbpQcb",
+    "outputId": "c7aab68f-2364-4d5e-b39b-0670d4afe97d"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0   -2.00\n",
+       "1    0.93\n",
+       "2    0.09\n",
+       "3    0.55\n",
+       "4    0.25\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "user_likely_critical = train.user_average_stars-train.business_average_stars\n",
+    "user_likely_critical.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 570
+    },
+    "colab_type": "code",
+    "id": "x_7S3iKbqhgw",
+    "outputId": "d92c6461-25f0-44a6-fd88-d6f4244e15ba"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>...</th>\n",
+       "      <th>bizcategory1</th>\n",
+       "      <th>bizcategory2</th>\n",
+       "      <th>top2categories</th>\n",
+       "      <th>business_region</th>\n",
+       "      <th>business_total_stars</th>\n",
+       "      <th>user_days_on_yelp</th>\n",
+       "      <th>user_reviews_per_day</th>\n",
+       "      <th>user_times_elite</th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>9uu-JXdQuQ3rXOd1Vxv8kA</td>\n",
+       "      <td>8zN3nV0zbtE377_XhlvabA</td>\n",
+       "      <td>MWahC54Rd_CNv_0VtjCD6A</td>\n",
+       "      <td>2017-06-27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Pool tables, darts, and other neighborhood bar...</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Sports Bars</td>\n",
+       "      <td>Restaurants Sports Bars</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>632.0</td>\n",
+       "      <td>2178</td>\n",
+       "      <td>0.002296</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>-2.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>UbCgugoTK2MfBmtU_8PXaQ</td>\n",
+       "      <td>wJ-PcjemwR44WitIJsDzsA</td>\n",
+       "      <td>N-GOto4b3ltfGJ7y-5g-pg</td>\n",
+       "      <td>2017-03-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>This place was alright. However, their classic...</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Beauty &amp; Spas</td>\n",
+       "      <td>Nail Salons</td>\n",
+       "      <td>Beauty &amp; Spas Nail Salons</td>\n",
+       "      <td>South East</td>\n",
+       "      <td>91.0</td>\n",
+       "      <td>1193</td>\n",
+       "      <td>0.005868</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.93</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6oF9_NR1O5Y_NOE6INXfrg</td>\n",
+       "      <td>fP4sMlVw_MvyGNv4xeTGDA</td>\n",
+       "      <td>RH3w77UyXaQPiOx2jOE7zg</td>\n",
+       "      <td>2017-07-14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>First time at Pieology Pizzeria and I was impr...</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Pizza</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Pizza Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>756.0</td>\n",
+       "      <td>2226</td>\n",
+       "      <td>0.009434</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.09</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>kyYWrcrr83GnJ7m_VEvwCA</td>\n",
+       "      <td>hgWMxKhrnOUd3m5nOUBIkA</td>\n",
+       "      <td>g6pwf1E-CylnZQRoaZGGdw</td>\n",
+       "      <td>2010-12-13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Its a good facility with lots of equipment and...</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>2013, 2012</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Active Life</td>\n",
+       "      <td>Fitness &amp; Instruction</td>\n",
+       "      <td>Active Life Fitness &amp; Instruction</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>948.0</td>\n",
+       "      <td>3324</td>\n",
+       "      <td>0.024970</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.55</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>K2X3XG9_M3EM0TWguo2bCw</td>\n",
+       "      <td>KMKPusWbBaIORB669W0EeQ</td>\n",
+       "      <td>14nl002my6qLaEcqYHLPig</td>\n",
+       "      <td>2016-09-12</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Very very disappointed! My shawarma chicken wa...</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Mediterranean</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Mediterranean Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>213.5</td>\n",
+       "      <td>1295</td>\n",
+       "      <td>0.021622</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.25</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 30 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                review_id             business_id                 user_id  \\\n",
+       "0  9uu-JXdQuQ3rXOd1Vxv8kA  8zN3nV0zbtE377_XhlvabA  MWahC54Rd_CNv_0VtjCD6A   \n",
+       "1  UbCgugoTK2MfBmtU_8PXaQ  wJ-PcjemwR44WitIJsDzsA  N-GOto4b3ltfGJ7y-5g-pg   \n",
+       "2  6oF9_NR1O5Y_NOE6INXfrg  fP4sMlVw_MvyGNv4xeTGDA  RH3w77UyXaQPiOx2jOE7zg   \n",
+       "3  kyYWrcrr83GnJ7m_VEvwCA  hgWMxKhrnOUd3m5nOUBIkA  g6pwf1E-CylnZQRoaZGGdw   \n",
+       "4  K2X3XG9_M3EM0TWguo2bCw  KMKPusWbBaIORB669W0EeQ  14nl002my6qLaEcqYHLPig   \n",
+       "\n",
+       "        date  cool  funny  useful  \\\n",
+       "0 2017-06-27     0      0       0   \n",
+       "1 2017-03-25     0      0       0   \n",
+       "2 2017-07-14     0      0       0   \n",
+       "3 2010-12-13     1      0       0   \n",
+       "4 2016-09-12     1      1       1   \n",
+       "\n",
+       "                                                text  user_average_stars  \\\n",
+       "0  Pool tables, darts, and other neighborhood bar...                2.00   \n",
+       "1  This place was alright. However, their classic...                4.43   \n",
+       "2  First time at Pieology Pizzeria and I was impr...                4.09   \n",
+       "3  Its a good facility with lots of equipment and...                3.55   \n",
+       "4  Very very disappointed! My shawarma chicken wa...                3.75   \n",
+       "\n",
+       "   user_elite  ...   bizcategory1           bizcategory2  \\\n",
+       "0        None  ...    Restaurants            Sports Bars   \n",
+       "1        None  ...  Beauty & Spas            Nail Salons   \n",
+       "2        None  ...          Pizza            Restaurants   \n",
+       "3  2013, 2012  ...    Active Life  Fitness & Instruction   \n",
+       "4        None  ...  Mediterranean            Restaurants   \n",
+       "\n",
+       "                      top2categories business_region  business_total_stars  \\\n",
+       "0            Restaurants Sports Bars      South West                 632.0   \n",
+       "1          Beauty & Spas Nail Salons      South East                  91.0   \n",
+       "2                  Pizza Restaurants      South West                 756.0   \n",
+       "3  Active Life Fitness & Instruction      South West                 948.0   \n",
+       "4          Mediterranean Restaurants      South West                 213.5   \n",
+       "\n",
+       "   user_days_on_yelp  user_reviews_per_day  user_times_elite  \\\n",
+       "0               2178              0.002296                 0   \n",
+       "1               1193              0.005868                 0   \n",
+       "2               2226              0.009434                 0   \n",
+       "3               3324              0.024970                 2   \n",
+       "4               1295              0.021622                 0   \n",
+       "\n",
+       "  authored_by_elite_user  user_business_avg_star_difference  \n",
+       "0                      0                              -2.00  \n",
+       "1                      0                               0.93  \n",
+       "2                      0                               0.09  \n",
+       "3                      0                               0.55  \n",
+       "4                      0                               0.25  \n",
+       "\n",
+       "[5 rows x 30 columns]"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['user_likely_critical'] = user_likely_critical\n",
+    "train.rename({'user_likely_critical': 'user_business_avg_star_difference'}, axis=1, inplace=True)\n",
+    "train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 357
+    },
+    "colab_type": "code",
+    "id": "wHs-2QsPrfaW",
+    "outputId": "45ae3471-822c-42c6-8855-e66650d37b4f"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                cool          funny         useful\n",
+      "count  159858.000000  159858.000000  159858.000000\n",
+      "mean        0.613132       0.382258       1.134976\n",
+      "std         2.897990       2.624454       3.363687\n",
+      "min         0.000000       0.000000       0.000000\n",
+      "25%         0.000000       0.000000       0.000000\n",
+      "50%         0.000000       0.000000       0.000000\n",
+      "75%         1.000000       0.000000       1.000000\n",
+      "max       234.000000     589.000000     246.000000\n",
+      "good reviews ^^ \n",
+      "               cool         funny        useful\n",
+      "count  80142.000000  80142.000000  80142.000000\n",
+      "mean       0.407377      0.624379      1.724165\n",
+      "std        3.023209      3.473608      8.507285\n",
+      "min        0.000000      0.000000      0.000000\n",
+      "25%        0.000000      0.000000      0.000000\n",
+      "50%        0.000000      0.000000      1.000000\n",
+      "75%        0.000000      1.000000      2.000000\n",
+      "max      245.000000    447.000000   1456.000000\n",
+      "bad reviews ^^\n"
+     ]
+    }
+   ],
+   "source": [
+    "# eda on review type\n",
+    "print(train[train.is_good_rating==1][['cool','funny','useful']].describe())\n",
+    "print('good reviews ^^ ')\n",
+    "print(train[train.is_good_rating==0][['cool','funny','useful']].describe())\n",
+    "print('bad reviews ^^')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "pXiPM7MwtFH8"
+   },
+   "outputs": [],
+   "source": [
+    "# seems like useful reviews tend to be strong indicators of a bad/negative rating\n",
+    "# cool reviews tend to be slightly indicative of a good rating \n",
+    "# funny reviews don't tend to inform the decision (at least according to this training set)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 550
+    },
+    "colab_type": "code",
+    "id": "fCOyQfU6vmCt",
+    "outputId": "e2bf4e57-daa5-4e1a-f01a-2da753c44c9a"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>...</th>\n",
+       "      <th>bizcategory1</th>\n",
+       "      <th>bizcategory2</th>\n",
+       "      <th>top2categories</th>\n",
+       "      <th>business_region</th>\n",
+       "      <th>business_total_stars</th>\n",
+       "      <th>user_days_on_yelp</th>\n",
+       "      <th>user_reviews_per_day</th>\n",
+       "      <th>user_times_elite</th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>9uu-JXdQuQ3rXOd1Vxv8kA</td>\n",
+       "      <td>8zN3nV0zbtE377_XhlvabA</td>\n",
+       "      <td>MWahC54Rd_CNv_0VtjCD6A</td>\n",
+       "      <td>2017-06-27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Pool tables, darts, and other neighborhood bar...</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Sports Bars</td>\n",
+       "      <td>Restaurants Sports Bars</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>632.0</td>\n",
+       "      <td>2177</td>\n",
+       "      <td>0.002297</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>-2.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>UbCgugoTK2MfBmtU_8PXaQ</td>\n",
+       "      <td>wJ-PcjemwR44WitIJsDzsA</td>\n",
+       "      <td>N-GOto4b3ltfGJ7y-5g-pg</td>\n",
+       "      <td>2017-03-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>This place was alright. However, their classic...</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Beauty &amp; Spas</td>\n",
+       "      <td>Nail Salons</td>\n",
+       "      <td>Beauty &amp; Spas Nail Salons</td>\n",
+       "      <td>South East</td>\n",
+       "      <td>91.0</td>\n",
+       "      <td>1192</td>\n",
+       "      <td>0.005872</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.93</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6oF9_NR1O5Y_NOE6INXfrg</td>\n",
+       "      <td>fP4sMlVw_MvyGNv4xeTGDA</td>\n",
+       "      <td>RH3w77UyXaQPiOx2jOE7zg</td>\n",
+       "      <td>2017-07-14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>First time at Pieology Pizzeria and I was impr...</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Pizza</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Pizza Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>756.0</td>\n",
+       "      <td>2225</td>\n",
+       "      <td>0.009438</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.09</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>kyYWrcrr83GnJ7m_VEvwCA</td>\n",
+       "      <td>hgWMxKhrnOUd3m5nOUBIkA</td>\n",
+       "      <td>g6pwf1E-CylnZQRoaZGGdw</td>\n",
+       "      <td>2010-12-13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Its a good facility with lots of equipment and...</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>2013, 2012</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Active Life</td>\n",
+       "      <td>Fitness &amp; Instruction</td>\n",
+       "      <td>Active Life Fitness &amp; Instruction</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>948.0</td>\n",
+       "      <td>3323</td>\n",
+       "      <td>0.024977</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.55</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>K2X3XG9_M3EM0TWguo2bCw</td>\n",
+       "      <td>KMKPusWbBaIORB669W0EeQ</td>\n",
+       "      <td>14nl002my6qLaEcqYHLPig</td>\n",
+       "      <td>2016-09-12</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Very very disappointed! My shawarma chicken wa...</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Mediterranean</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Mediterranean Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>213.5</td>\n",
+       "      <td>1294</td>\n",
+       "      <td>0.021638</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.25</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 30 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                review_id             business_id                 user_id  \\\n",
+       "0  9uu-JXdQuQ3rXOd1Vxv8kA  8zN3nV0zbtE377_XhlvabA  MWahC54Rd_CNv_0VtjCD6A   \n",
+       "1  UbCgugoTK2MfBmtU_8PXaQ  wJ-PcjemwR44WitIJsDzsA  N-GOto4b3ltfGJ7y-5g-pg   \n",
+       "2  6oF9_NR1O5Y_NOE6INXfrg  fP4sMlVw_MvyGNv4xeTGDA  RH3w77UyXaQPiOx2jOE7zg   \n",
+       "3  kyYWrcrr83GnJ7m_VEvwCA  hgWMxKhrnOUd3m5nOUBIkA  g6pwf1E-CylnZQRoaZGGdw   \n",
+       "4  K2X3XG9_M3EM0TWguo2bCw  KMKPusWbBaIORB669W0EeQ  14nl002my6qLaEcqYHLPig   \n",
+       "\n",
+       "        date  cool  funny  useful  \\\n",
+       "0 2017-06-27     0      0       0   \n",
+       "1 2017-03-25     0      0       0   \n",
+       "2 2017-07-14     0      0       0   \n",
+       "3 2010-12-13     1      0       0   \n",
+       "4 2016-09-12     1      1       1   \n",
+       "\n",
+       "                                                text  user_average_stars  \\\n",
+       "0  Pool tables, darts, and other neighborhood bar...                2.00   \n",
+       "1  This place was alright. However, their classic...                4.43   \n",
+       "2  First time at Pieology Pizzeria and I was impr...                4.09   \n",
+       "3  Its a good facility with lots of equipment and...                3.55   \n",
+       "4  Very very disappointed! My shawarma chicken wa...                3.75   \n",
+       "\n",
+       "   user_elite  ...   bizcategory1           bizcategory2  \\\n",
+       "0        None  ...    Restaurants            Sports Bars   \n",
+       "1        None  ...  Beauty & Spas            Nail Salons   \n",
+       "2        None  ...          Pizza            Restaurants   \n",
+       "3  2013, 2012  ...    Active Life  Fitness & Instruction   \n",
+       "4        None  ...  Mediterranean            Restaurants   \n",
+       "\n",
+       "                      top2categories business_region  business_total_stars  \\\n",
+       "0            Restaurants Sports Bars      South West                 632.0   \n",
+       "1          Beauty & Spas Nail Salons      South East                  91.0   \n",
+       "2                  Pizza Restaurants      South West                 756.0   \n",
+       "3  Active Life Fitness & Instruction      South West                 948.0   \n",
+       "4          Mediterranean Restaurants      South West                 213.5   \n",
+       "\n",
+       "   user_days_on_yelp  user_reviews_per_day  user_times_elite  \\\n",
+       "0               2177              0.002297                 0   \n",
+       "1               1192              0.005872                 0   \n",
+       "2               2225              0.009438                 0   \n",
+       "3               3323              0.024977                 2   \n",
+       "4               1294              0.021638                 0   \n",
+       "\n",
+       "  authored_by_elite_user  user_business_avg_star_difference  \n",
+       "0                      0                              -2.00  \n",
+       "1                      0                               0.93  \n",
+       "2                      0                               0.09  \n",
+       "3                      0                               0.55  \n",
+       "4                      0                               0.25  \n",
+       "\n",
+       "[5 rows x 30 columns]"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "qimWOAE0vnHD"
+   },
+   "outputs": [],
+   "source": [
+    "good_reviews = train[train.is_good_rating==1]\n",
+    "bad_reviews = train[train.is_good_rating==0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 337
+    },
+    "colab_type": "code",
+    "id": "MZf8Y-dKv1jx",
+    "outputId": "99563b1a-71db-4314-9c14-ca9be105952d"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_review_count</th>\n",
+       "      <th>business_latitude</th>\n",
+       "      <th>business_longitude</th>\n",
+       "      <th>business_review_count</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>is_good_rating</th>\n",
+       "      <th>business_total_stars</th>\n",
+       "      <th>user_days_on_yelp</th>\n",
+       "      <th>user_reviews_per_day</th>\n",
+       "      <th>user_times_elite</th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159857.000000</td>\n",
+       "      <td>159857.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.0</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "      <td>159858.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>0.613132</td>\n",
+       "      <td>0.382258</td>\n",
+       "      <td>1.134976</td>\n",
+       "      <td>4.010405</td>\n",
+       "      <td>109.536376</td>\n",
+       "      <td>37.179890</td>\n",
+       "      <td>-101.340383</td>\n",
+       "      <td>355.556769</td>\n",
+       "      <td>3.965297</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1402.061029</td>\n",
+       "      <td>2558.343461</td>\n",
+       "      <td>0.036036</td>\n",
+       "      <td>0.949242</td>\n",
+       "      <td>0.195711</td>\n",
+       "      <td>0.045107</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>2.897990</td>\n",
+       "      <td>2.624454</td>\n",
+       "      <td>3.363687</td>\n",
+       "      <td>0.600613</td>\n",
+       "      <td>238.983321</td>\n",
+       "      <td>4.299659</td>\n",
+       "      <td>20.561943</td>\n",
+       "      <td>731.811817</td>\n",
+       "      <td>0.615731</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>2882.916704</td>\n",
+       "      <td>944.303676</td>\n",
+       "      <td>0.068528</td>\n",
+       "      <td>2.047782</td>\n",
+       "      <td>0.396748</td>\n",
+       "      <td>0.813381</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1.320000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>-36.086009</td>\n",
+       "      <td>-122.499387</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>6.000000</td>\n",
+       "      <td>667.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>-3.680000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>3.650000</td>\n",
+       "      <td>7.000000</td>\n",
+       "      <td>33.587501</td>\n",
+       "      <td>-115.154036</td>\n",
+       "      <td>35.000000</td>\n",
+       "      <td>3.500000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>136.000000</td>\n",
+       "      <td>1837.000000</td>\n",
+       "      <td>0.003397</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>-0.470000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>4.000000</td>\n",
+       "      <td>24.000000</td>\n",
+       "      <td>36.102251</td>\n",
+       "      <td>-111.973506</td>\n",
+       "      <td>117.000000</td>\n",
+       "      <td>4.000000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>452.000000</td>\n",
+       "      <td>2556.000000</td>\n",
+       "      <td>0.010127</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>4.410000</td>\n",
+       "      <td>100.000000</td>\n",
+       "      <td>40.436993</td>\n",
+       "      <td>-81.005802</td>\n",
+       "      <td>342.000000</td>\n",
+       "      <td>4.500000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1352.000000</td>\n",
+       "      <td>3235.000000</td>\n",
+       "      <td>0.036727</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.500000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>234.000000</td>\n",
+       "      <td>589.000000</td>\n",
+       "      <td>246.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>3468.000000</td>\n",
+       "      <td>59.438181</td>\n",
+       "      <td>115.086769</td>\n",
+       "      <td>7361.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>29444.000000</td>\n",
+       "      <td>5475.000000</td>\n",
+       "      <td>0.940347</td>\n",
+       "      <td>12.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>4.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                cool          funny         useful  user_average_stars  \\\n",
+       "count  159858.000000  159858.000000  159858.000000       159858.000000   \n",
+       "mean        0.613132       0.382258       1.134976            4.010405   \n",
+       "std         2.897990       2.624454       3.363687            0.600613   \n",
+       "min         0.000000       0.000000       0.000000            1.320000   \n",
+       "25%         0.000000       0.000000       0.000000            3.650000   \n",
+       "50%         0.000000       0.000000       0.000000            4.000000   \n",
+       "75%         1.000000       0.000000       1.000000            4.410000   \n",
+       "max       234.000000     589.000000     246.000000            5.000000   \n",
+       "\n",
+       "       user_review_count  business_latitude  business_longitude  \\\n",
+       "count      159858.000000      159857.000000       159857.000000   \n",
+       "mean          109.536376          37.179890         -101.340383   \n",
+       "std           238.983321           4.299659           20.561943   \n",
+       "min             0.000000         -36.086009         -122.499387   \n",
+       "25%             7.000000          33.587501         -115.154036   \n",
+       "50%            24.000000          36.102251         -111.973506   \n",
+       "75%           100.000000          40.436993          -81.005802   \n",
+       "max          3468.000000          59.438181          115.086769   \n",
+       "\n",
+       "       business_review_count  business_average_stars  is_good_rating  \\\n",
+       "count          159858.000000           159858.000000        159858.0   \n",
+       "mean              355.556769                3.965297             1.0   \n",
+       "std               731.811817                0.615731             0.0   \n",
+       "min                 3.000000                1.000000             1.0   \n",
+       "25%                35.000000                3.500000             1.0   \n",
+       "50%               117.000000                4.000000             1.0   \n",
+       "75%               342.000000                4.500000             1.0   \n",
+       "max              7361.000000                5.000000             1.0   \n",
+       "\n",
+       "       business_total_stars  user_days_on_yelp  user_reviews_per_day  \\\n",
+       "count         159858.000000      159858.000000         159858.000000   \n",
+       "mean            1402.061029        2558.343461              0.036036   \n",
+       "std             2882.916704         944.303676              0.068528   \n",
+       "min                6.000000         667.000000              0.000000   \n",
+       "25%              136.000000        1837.000000              0.003397   \n",
+       "50%              452.000000        2556.000000              0.010127   \n",
+       "75%             1352.000000        3235.000000              0.036727   \n",
+       "max            29444.000000        5475.000000              0.940347   \n",
+       "\n",
+       "       user_times_elite  authored_by_elite_user  \\\n",
+       "count     159858.000000           159858.000000   \n",
+       "mean           0.949242                0.195711   \n",
+       "std            2.047782                0.396748   \n",
+       "min            0.000000                0.000000   \n",
+       "25%            0.000000                0.000000   \n",
+       "50%            0.000000                0.000000   \n",
+       "75%            0.000000                0.000000   \n",
+       "max           12.000000                1.000000   \n",
+       "\n",
+       "       user_business_avg_star_difference  \n",
+       "count                      159858.000000  \n",
+       "mean                            0.045107  \n",
+       "std                             0.813381  \n",
+       "min                            -3.680000  \n",
+       "25%                            -0.470000  \n",
+       "50%                             0.000000  \n",
+       "75%                             0.500000  \n",
+       "max                             4.000000  "
+      ]
+     },
+     "execution_count": 51,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "good_reviews.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 337
+    },
+    "colab_type": "code",
+    "id": "aNZq8aq6v4gw",
+    "outputId": "4d6ef781-0a40-4bf0-da32-f5c9cc336c5a"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_review_count</th>\n",
+       "      <th>business_latitude</th>\n",
+       "      <th>business_longitude</th>\n",
+       "      <th>business_review_count</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>is_good_rating</th>\n",
+       "      <th>business_total_stars</th>\n",
+       "      <th>user_days_on_yelp</th>\n",
+       "      <th>user_reviews_per_day</th>\n",
+       "      <th>user_times_elite</th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80141.000000</td>\n",
+       "      <td>80141.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.0</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "      <td>80142.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>0.407377</td>\n",
+       "      <td>0.624379</td>\n",
+       "      <td>1.724165</td>\n",
+       "      <td>3.232444</td>\n",
+       "      <td>111.041888</td>\n",
+       "      <td>37.410215</td>\n",
+       "      <td>-100.538578</td>\n",
+       "      <td>332.931210</td>\n",
+       "      <td>3.288525</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1175.240885</td>\n",
+       "      <td>2571.837713</td>\n",
+       "      <td>0.036251</td>\n",
+       "      <td>0.920004</td>\n",
+       "      <td>0.182701</td>\n",
+       "      <td>-0.056081</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>3.023209</td>\n",
+       "      <td>3.473608</td>\n",
+       "      <td>8.507285</td>\n",
+       "      <td>0.875075</td>\n",
+       "      <td>243.161836</td>\n",
+       "      <td>4.308290</td>\n",
+       "      <td>20.339136</td>\n",
+       "      <td>718.892901</td>\n",
+       "      <td>0.764510</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>2642.907697</td>\n",
+       "      <td>946.959650</td>\n",
+       "      <td>0.070072</td>\n",
+       "      <td>2.021163</td>\n",
+       "      <td>0.386423</td>\n",
+       "      <td>1.084344</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>-34.510780</td>\n",
+       "      <td>-122.499387</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>667.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>-4.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>2.930000</td>\n",
+       "      <td>7.000000</td>\n",
+       "      <td>33.626688</td>\n",
+       "      <td>-115.154480</td>\n",
+       "      <td>30.000000</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>90.000000</td>\n",
+       "      <td>1851.000000</td>\n",
+       "      <td>0.003183</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>-0.660000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>3.490000</td>\n",
+       "      <td>23.000000</td>\n",
+       "      <td>36.109538</td>\n",
+       "      <td>-111.950366</td>\n",
+       "      <td>96.000000</td>\n",
+       "      <td>3.500000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>315.000000</td>\n",
+       "      <td>2572.000000</td>\n",
+       "      <td>0.009858</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>3.820000</td>\n",
+       "      <td>103.000000</td>\n",
+       "      <td>40.583216</td>\n",
+       "      <td>-80.845023</td>\n",
+       "      <td>290.000000</td>\n",
+       "      <td>4.000000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1012.000000</td>\n",
+       "      <td>3249.000000</td>\n",
+       "      <td>0.037331</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.630000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>245.000000</td>\n",
+       "      <td>447.000000</td>\n",
+       "      <td>1456.000000</td>\n",
+       "      <td>4.940000</td>\n",
+       "      <td>3468.000000</td>\n",
+       "      <td>59.436505</td>\n",
+       "      <td>115.086769</td>\n",
+       "      <td>7361.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>29444.000000</td>\n",
+       "      <td>5475.000000</td>\n",
+       "      <td>0.940347</td>\n",
+       "      <td>12.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>3.800000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "               cool         funny        useful  user_average_stars  \\\n",
+       "count  80142.000000  80142.000000  80142.000000        80142.000000   \n",
+       "mean       0.407377      0.624379      1.724165            3.232444   \n",
+       "std        3.023209      3.473608      8.507285            0.875075   \n",
+       "min        0.000000      0.000000      0.000000            1.000000   \n",
+       "25%        0.000000      0.000000      0.000000            2.930000   \n",
+       "50%        0.000000      0.000000      1.000000            3.490000   \n",
+       "75%        0.000000      1.000000      2.000000            3.820000   \n",
+       "max      245.000000    447.000000   1456.000000            4.940000   \n",
+       "\n",
+       "       user_review_count  business_latitude  business_longitude  \\\n",
+       "count       80142.000000       80141.000000        80141.000000   \n",
+       "mean          111.041888          37.410215         -100.538578   \n",
+       "std           243.161836           4.308290           20.339136   \n",
+       "min             0.000000         -34.510780         -122.499387   \n",
+       "25%             7.000000          33.626688         -115.154480   \n",
+       "50%            23.000000          36.109538         -111.950366   \n",
+       "75%           103.000000          40.583216          -80.845023   \n",
+       "max          3468.000000          59.436505          115.086769   \n",
+       "\n",
+       "       business_review_count  business_average_stars  is_good_rating  \\\n",
+       "count           80142.000000            80142.000000         80142.0   \n",
+       "mean              332.931210                3.288525             0.0   \n",
+       "std               718.892901                0.764510             0.0   \n",
+       "min                 3.000000                1.000000             0.0   \n",
+       "25%                30.000000                3.000000             0.0   \n",
+       "50%                96.000000                3.500000             0.0   \n",
+       "75%               290.000000                4.000000             0.0   \n",
+       "max              7361.000000                5.000000             0.0   \n",
+       "\n",
+       "       business_total_stars  user_days_on_yelp  user_reviews_per_day  \\\n",
+       "count          80142.000000       80142.000000          80142.000000   \n",
+       "mean            1175.240885        2571.837713              0.036251   \n",
+       "std             2642.907697         946.959650              0.070072   \n",
+       "min                3.000000         667.000000              0.000000   \n",
+       "25%               90.000000        1851.000000              0.003183   \n",
+       "50%              315.000000        2572.000000              0.009858   \n",
+       "75%             1012.000000        3249.000000              0.037331   \n",
+       "max            29444.000000        5475.000000              0.940347   \n",
+       "\n",
+       "       user_times_elite  authored_by_elite_user  \\\n",
+       "count      80142.000000            80142.000000   \n",
+       "mean           0.920004                0.182701   \n",
+       "std            2.021163                0.386423   \n",
+       "min            0.000000                0.000000   \n",
+       "25%            0.000000                0.000000   \n",
+       "50%            0.000000                0.000000   \n",
+       "75%            0.000000                0.000000   \n",
+       "max           12.000000                1.000000   \n",
+       "\n",
+       "       user_business_avg_star_difference  \n",
+       "count                       80142.000000  \n",
+       "mean                           -0.056081  \n",
+       "std                             1.084344  \n",
+       "min                            -4.000000  \n",
+       "25%                            -0.660000  \n",
+       "50%                             0.000000  \n",
+       "75%                             0.630000  \n",
+       "max                             3.800000  "
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "bad_reviews.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "nac-wK1zwKx5"
+   },
+   "outputs": [],
+   "source": [
+    "# overall observations:\n",
+    "\n",
+    "# - there are over 11000 unique values in top2categories \n",
+    "# - bizcategory1 and bizcategory2 values are informative, but also have ~1000 unique values each\n",
+    "# - business_region, business_state are too noisy to use\n",
+    "\n",
+    "# good and bad reviews don't really differ much based on: \n",
+    "# - time on yelp or reviews per day\n",
+    "# - number of times author was elite\n",
+    "\n",
+    "\n",
+    "\n",
+    "# good and bad reviews are different in that:\n",
+    "# - good reviews tend to come from elite users (in the years the users are elite)\n",
+    "# - bad reviews tend to have a negative user to business star difference (users visit restaurants that have a higher rating than what the users themselves typically give)\n",
+    "# - useful >>> negative, cool > positive, funny > negative\n",
+    "# - users giving negative reviews tend to have lower user_average_stars (typically more critical)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 173,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "biDPEKAg-c98"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>polarity</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>token</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>}:</th>\n",
+       "      <td>-2.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>}:(</th>\n",
+       "      <td>-2.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>}:)</th>\n",
+       "      <td>0.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>}:-(</th>\n",
+       "      <td>-2.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>}:-)</th>\n",
+       "      <td>0.3</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       polarity\n",
+       "token          \n",
+       "}:         -2.1\n",
+       "}:(        -2.0\n",
+       "}:)         0.4\n",
+       "}:-(       -2.1\n",
+       "}:-)        0.3"
+      ]
+     },
+     "execution_count": 173,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sent = pd.read_csv(\"vaderSentiment/vaderSentiment/vader_lexicon.txt\", sep='\\t', header=None).iloc[:, :2]\n",
+    "sent.columns = [\"token\", \"polarity\"]\n",
+    "sent.drop_duplicates(subset=\"token\", keep='first',inplace=True)\n",
+    "sent.set_index(\"token\", inplace=True)\n",
+    "sent.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 174,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "review_id                  object\n",
+       "business_id                object\n",
+       "user_id                    object\n",
+       "date                       object\n",
+       "cool                        int64\n",
+       "funny                       int64\n",
+       "useful                      int64\n",
+       "text                       object\n",
+       "user_average_stars        float64\n",
+       "user_elite                 object\n",
+       "user_review_count           int64\n",
+       "user_yelping_since         object\n",
+       "business_categories        object\n",
+       "business_city              object\n",
+       "business_latitude         float64\n",
+       "business_longitude        float64\n",
+       "business_review_count       int64\n",
+       "business_average_stars    float64\n",
+       "business_state             object\n",
+       "sentiment                 float64\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 174,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sentiment = np.zeros(len(test))\n",
+    "for text in np.arange(len(test)):\n",
+    "    sum = 0\n",
+    "    for i in test.iloc[text,7].split():\n",
+    "        if i in sent.index:\n",
+    "            sum += sent.loc[i][\"polarity\"]\n",
+    "    sentiment[text] = sum\n",
+    "test[\"sentiment\"] = sentiment\n",
+    "test.dtypes\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 182,
+   "metadata": {
+    "colab": {},
+    "colab_type": "code",
+    "id": "1FKKLnm-x8oD"
+   },
+   "outputs": [],
+   "source": [
+    "# trying it out with no text features, just user/business/voting features\n",
+    "def featurize_no_text(df):\n",
+    "    sent = pd.read_csv(\"vaderSentiment/vaderSentiment/vader_lexicon.txt\", sep='\\t', header=None).iloc[:, :2]\n",
+    "    sent.columns = [\"token\", \"polarity\"]\n",
+    "    sent.drop_duplicates(subset=\"token\", keep='first',inplace=True)\n",
+    "    sent.set_index(\"token\", inplace=True)\n",
+    "    df['authored_by_elite_user'] = [1 if x in y else 0 for x,y in zip(pd.to_datetime(df.date).dt.strftime('%Y'), df.user_elite)]\n",
+    "    df['user_business_avg_star_difference'] = df.user_average_stars-df.business_average_stars\n",
+    "    df[\"text\"] = df[\"text\"].str.lower()\n",
+    "    sentiment = []\n",
+    "    for text in np.arange(len(df)):\n",
+    "        sentiment.append(np.sum([sent.loc[i][\"polarity\"] for i in df.iloc[text,7].split() if i in sent.index]))\n",
+    "    df[\"sentiment\"] = sentiment\n",
+    "#     sentiment = np.zeros(len(df))\n",
+    "#     for text in np.arange(len(df)):\n",
+    "#         sum = 0\n",
+    "#         for i in test.iloc[text,7].split():\n",
+    "#             if i in sent.index:\n",
+    "#                 sum += sent.loc[i][\"polarity\"]\n",
+    "#         sentiment[text] = sum\n",
+    "#     df[\"sentiment\"] = sentiment\n",
+    "\n",
+    "    return df[['authored_by_elite_user', 'useful', 'cool', 'funny', 'user_average_stars', 'user_business_avg_star_difference', 'business_average_stars',\"sentiment\"]]\n",
+    "\n",
+    "train_data = pd.read_csv('yelp_train.csv')\n",
+    "no_text_train = featurize_no_text(train_data)\n",
+    "no_text_train_y = train_data['is_good_rating']\n",
+    "no_text_test = featurize_no_text(pd.read_csv('yelp_test.csv'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 186,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 204
+    },
+    "colab_type": "code",
+    "id": "h4PURNVr4HhN",
+    "outputId": "240e33cf-73de-4d92-eab8-2b9664e82335"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>sentiment</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>-2.00</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>1.5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>0.93</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>3.3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>0.09</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>3.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>0.55</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>15.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>0.25</td>\n",
+       "      <td>3.5</td>\n",
+       "      <td>-2.8</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   authored_by_elite_user  useful  cool  funny  user_average_stars  \\\n",
+       "0                       0       0     0      0                2.00   \n",
+       "1                       0       0     0      0                4.43   \n",
+       "2                       0       0     0      0                4.09   \n",
+       "3                       0       0     1      0                3.55   \n",
+       "4                       0       1     1      1                3.75   \n",
+       "\n",
+       "   user_business_avg_star_difference  business_average_stars  sentiment  \n",
+       "0                              -2.00                     4.0        1.5  \n",
+       "1                               0.93                     3.5        3.3  \n",
+       "2                               0.09                     4.0        3.1  \n",
+       "3                               0.55                     3.0       15.2  \n",
+       "4                               0.25                     3.5       -2.8  "
+      ]
+     },
+     "execution_count": 186,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "no_text_train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 187,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 567
+    },
+    "colab_type": "code",
+    "id": "MTkrDxSG4Pjz",
+    "outputId": "12d7d710-77e2-438c-b3d1-686c012bf1bd"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "      <th>business_average_stars</th>\n",
+       "      <th>sentiment</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3.80</td>\n",
+       "      <td>-0.20</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>-3.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3.80</td>\n",
+       "      <td>-1.20</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>7.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4.14</td>\n",
+       "      <td>0.14</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>4.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4.26</td>\n",
+       "      <td>0.26</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>6.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>11</td>\n",
+       "      <td>7</td>\n",
+       "      <td>6</td>\n",
+       "      <td>3.83</td>\n",
+       "      <td>-0.17</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>44.2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   authored_by_elite_user  useful  cool  funny  user_average_stars  \\\n",
+       "0                       1       2     2      1                3.80   \n",
+       "1                       1       2     1      0                3.80   \n",
+       "2                       0       1     1      1                4.14   \n",
+       "3                       1       2     1      1                4.26   \n",
+       "4                       1      11     7      6                3.83   \n",
+       "\n",
+       "   user_business_avg_star_difference  business_average_stars  sentiment  \n",
+       "0                              -0.20                     4.0       -3.8  \n",
+       "1                              -1.20                     5.0        7.2  \n",
+       "2                               0.14                     4.0        4.1  \n",
+       "3                               0.26                     4.0        6.1  \n",
+       "4                              -0.17                     4.0       44.2  "
+      ]
+     },
+     "execution_count": 187,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "no_text_test.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 185,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "2WA-GJxD4S7s",
+    "outputId": "aa64073f-c7a9-44f9-ddcf-5fbecee57bab"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.7383833333333333\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.neural_network import MLPClassifier\n",
+    "clf = MLPClassifier(activation='logistic', solver='adam', learning_rate='adaptive', alpha=1e-4, hidden_layer_sizes=(100, 100), random_state=42) \n",
+    "X = no_text_train\n",
+    "y = no_text_train_y\n",
+    "clf.fit(X, y)\n",
+    "predictions = clf.predict(no_text_test)\n",
+    "accuracy = np.mean(predictions==sample['is_good_rating'])\n",
+    "print(accuracy)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 190,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.73745\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.neural_network import MLPClassifier\n",
+    "clf = MLPClassifier(activation='logistic', solver='sgd', learning_rate='adaptive', alpha=1e-4, hidden_layer_sizes=(100, 100), random_state=42) \n",
+    "X = no_text_train\n",
+    "y = no_text_train_y\n",
+    "clf.fit(X, y)\n",
+    "predictions = clf.predict(no_text_test)\n",
+    "accuracy = np.mean(predictions==sample['is_good_rating'])\n",
+    "print(accuracy)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 189,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Iteration 1, loss = 0.52384697\n",
+      "Iteration 2, loss = 0.48181958\n",
+      "Iteration 3, loss = 0.45973079\n",
+      "Iteration 4, loss = 0.44747909\n",
+      "Iteration 5, loss = 0.43784024\n",
+      "Iteration 6, loss = 0.42950743\n",
+      "Iteration 7, loss = 0.42268625\n",
+      "Iteration 8, loss = 0.41714370\n",
+      "Iteration 9, loss = 0.41352400\n",
+      "Iteration 10, loss = 0.41082586\n",
+      "Iteration 11, loss = 0.40917496\n",
+      "Iteration 12, loss = 0.40781139\n",
+      "Iteration 13, loss = 0.40722904\n",
+      "Iteration 14, loss = 0.40651823\n",
+      "Iteration 15, loss = 0.40627608\n",
+      "Iteration 16, loss = 0.40587013\n",
+      "Iteration 17, loss = 0.40584052\n",
+      "Iteration 18, loss = 0.40546180\n",
+      "Iteration 19, loss = 0.40554481\n",
+      "Iteration 20, loss = 0.40503739\n",
+      "Iteration 21, loss = 0.40496589\n",
+      "Iteration 22, loss = 0.40466054\n",
+      "Iteration 23, loss = 0.40451942\n",
+      "Iteration 24, loss = 0.40418988\n",
+      "Iteration 25, loss = 0.40402349\n",
+      "Iteration 26, loss = 0.40371924\n",
+      "Iteration 27, loss = 0.40365654\n",
+      "Iteration 28, loss = 0.40355815\n",
+      "Iteration 29, loss = 0.40347555\n",
+      "Iteration 30, loss = 0.40347716\n",
+      "Iteration 31, loss = 0.40335933\n",
+      "Iteration 32, loss = 0.40306705\n",
+      "Iteration 33, loss = 0.40328897\n",
+      "Iteration 34, loss = 0.40305473\n",
+      "Iteration 35, loss = 0.40310266\n",
+      "Iteration 36, loss = 0.40264634\n",
+      "Iteration 37, loss = 0.40277607\n",
+      "Iteration 38, loss = 0.40248061\n",
+      "Iteration 39, loss = 0.40246235\n",
+      "Iteration 40, loss = 0.40250757\n",
+      "Iteration 41, loss = 0.40227686\n",
+      "Iteration 42, loss = 0.40233150\n",
+      "Iteration 43, loss = 0.40205860\n",
+      "Iteration 44, loss = 0.40197465\n",
+      "Iteration 45, loss = 0.40189507\n",
+      "Iteration 46, loss = 0.40178655\n",
+      "Iteration 47, loss = 0.40185311\n",
+      "Iteration 48, loss = 0.40153998\n",
+      "Iteration 49, loss = 0.40189546\n",
+      "Iteration 50, loss = 0.40163005\n",
+      "0.721\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/Users/amandawu/anaconda3/lib/python3.7/site-packages/sklearn/neural_network/multilayer_perceptron.py:562: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (50) reached and the optimization hasn't converged yet.\n",
+      "  % self.max_iter, ConvergenceWarning)\n"
+     ]
+    }
+   ],
+   "source": [
+    "clf = MLPClassifier(hidden_layer_sizes=(10), max_iter=50, alpha=0.0001,\n",
+    "                     solver='sgd', verbose=10,  random_state=42,tol=0.000000001)\n",
+    "X = no_text_train\n",
+    "y = no_text_train_y\n",
+    "clf.fit(X, y)\n",
+    "predictions = clf.predict(no_text_test)\n",
+    "accuracy = np.mean(predictions==sample['is_good_rating'])\n",
+    "print(accuracy)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 34
+    },
+    "colab_type": "code",
+    "id": "4zasIkol6J6D",
+    "outputId": "ac42c66f-249c-4945-8327-49c8628c0e5a"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([1, 1, 1, ..., 1, 1, 1])"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "predictions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab": {
+     "base_uri": "https://localhost:8080/",
+     "height": 267
+    },
+    "colab_type": "code",
+    "id": "4Brs43zo6vZ0",
+    "outputId": "a88f4620-ebab-4b67-fe6b-ea656ae0c739"
+   },
+   "outputs": [],
+   "source": [
+    "preds = pd.read_csv('yelp_sample.csv')\n",
+    "print(preds.head())\n",
+    "preds.is_good_rating = predictions\n",
+    "preds.set_index('review_id', inplace=True)\n",
+    "print(preds.head())\n",
+    "preds.to_csv('preds.csv')\n",
+    "# !cp preds.csv /content/gdrive/My\\ Drive/Cal/Data\\ 144\\ Kaggle\\ Challenge"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>review_id</th>\n",
+       "      <th>business_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>date</th>\n",
+       "      <th>cool</th>\n",
+       "      <th>funny</th>\n",
+       "      <th>useful</th>\n",
+       "      <th>text</th>\n",
+       "      <th>user_average_stars</th>\n",
+       "      <th>user_elite</th>\n",
+       "      <th>...</th>\n",
+       "      <th>bizcategory1</th>\n",
+       "      <th>bizcategory2</th>\n",
+       "      <th>top2categories</th>\n",
+       "      <th>business_region</th>\n",
+       "      <th>business_total_stars</th>\n",
+       "      <th>user_days_on_yelp</th>\n",
+       "      <th>user_reviews_per_day</th>\n",
+       "      <th>user_times_elite</th>\n",
+       "      <th>authored_by_elite_user</th>\n",
+       "      <th>user_business_avg_star_difference</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>9uu-JXdQuQ3rXOd1Vxv8kA</td>\n",
+       "      <td>8zN3nV0zbtE377_XhlvabA</td>\n",
+       "      <td>MWahC54Rd_CNv_0VtjCD6A</td>\n",
+       "      <td>2017-06-27</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Pool tables, darts, and other neighborhood bar...</td>\n",
+       "      <td>2.00</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Sports Bars</td>\n",
+       "      <td>Restaurants Sports Bars</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>632.0</td>\n",
+       "      <td>2178</td>\n",
+       "      <td>0.002296</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>-2.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>UbCgugoTK2MfBmtU_8PXaQ</td>\n",
+       "      <td>wJ-PcjemwR44WitIJsDzsA</td>\n",
+       "      <td>N-GOto4b3ltfGJ7y-5g-pg</td>\n",
+       "      <td>2017-03-25</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>This place was alright. However, their classic...</td>\n",
+       "      <td>4.43</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Beauty &amp; Spas</td>\n",
+       "      <td>Nail Salons</td>\n",
+       "      <td>Beauty &amp; Spas Nail Salons</td>\n",
+       "      <td>South East</td>\n",
+       "      <td>91.0</td>\n",
+       "      <td>1193</td>\n",
+       "      <td>0.005868</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.93</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>6oF9_NR1O5Y_NOE6INXfrg</td>\n",
+       "      <td>fP4sMlVw_MvyGNv4xeTGDA</td>\n",
+       "      <td>RH3w77UyXaQPiOx2jOE7zg</td>\n",
+       "      <td>2017-07-14</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>First time at Pieology Pizzeria and I was impr...</td>\n",
+       "      <td>4.09</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Pizza</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Pizza Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>756.0</td>\n",
+       "      <td>2226</td>\n",
+       "      <td>0.009434</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.09</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>kyYWrcrr83GnJ7m_VEvwCA</td>\n",
+       "      <td>hgWMxKhrnOUd3m5nOUBIkA</td>\n",
+       "      <td>g6pwf1E-CylnZQRoaZGGdw</td>\n",
+       "      <td>2010-12-13</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Its a good facility with lots of equipment and...</td>\n",
+       "      <td>3.55</td>\n",
+       "      <td>2013, 2012</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Active Life</td>\n",
+       "      <td>Fitness &amp; Instruction</td>\n",
+       "      <td>Active Life Fitness &amp; Instruction</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>948.0</td>\n",
+       "      <td>3324</td>\n",
+       "      <td>0.024970</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.55</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>K2X3XG9_M3EM0TWguo2bCw</td>\n",
+       "      <td>KMKPusWbBaIORB669W0EeQ</td>\n",
+       "      <td>14nl002my6qLaEcqYHLPig</td>\n",
+       "      <td>2016-09-12</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Very very disappointed! My shawarma chicken wa...</td>\n",
+       "      <td>3.75</td>\n",
+       "      <td>None</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Mediterranean</td>\n",
+       "      <td>Restaurants</td>\n",
+       "      <td>Mediterranean Restaurants</td>\n",
+       "      <td>South West</td>\n",
+       "      <td>213.5</td>\n",
+       "      <td>1295</td>\n",
+       "      <td>0.021622</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.25</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 30 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                review_id             business_id                 user_id  \\\n",
+       "0  9uu-JXdQuQ3rXOd1Vxv8kA  8zN3nV0zbtE377_XhlvabA  MWahC54Rd_CNv_0VtjCD6A   \n",
+       "1  UbCgugoTK2MfBmtU_8PXaQ  wJ-PcjemwR44WitIJsDzsA  N-GOto4b3ltfGJ7y-5g-pg   \n",
+       "2  6oF9_NR1O5Y_NOE6INXfrg  fP4sMlVw_MvyGNv4xeTGDA  RH3w77UyXaQPiOx2jOE7zg   \n",
+       "3  kyYWrcrr83GnJ7m_VEvwCA  hgWMxKhrnOUd3m5nOUBIkA  g6pwf1E-CylnZQRoaZGGdw   \n",
+       "4  K2X3XG9_M3EM0TWguo2bCw  KMKPusWbBaIORB669W0EeQ  14nl002my6qLaEcqYHLPig   \n",
+       "\n",
+       "        date  cool  funny  useful  \\\n",
+       "0 2017-06-27     0      0       0   \n",
+       "1 2017-03-25     0      0       0   \n",
+       "2 2017-07-14     0      0       0   \n",
+       "3 2010-12-13     1      0       0   \n",
+       "4 2016-09-12     1      1       1   \n",
+       "\n",
+       "                                                text  user_average_stars  \\\n",
+       "0  Pool tables, darts, and other neighborhood bar...                2.00   \n",
+       "1  This place was alright. However, their classic...                4.43   \n",
+       "2  First time at Pieology Pizzeria and I was impr...                4.09   \n",
+       "3  Its a good facility with lots of equipment and...                3.55   \n",
+       "4  Very very disappointed! My shawarma chicken wa...                3.75   \n",
+       "\n",
+       "   user_elite  ...   bizcategory1           bizcategory2  \\\n",
+       "0        None  ...    Restaurants            Sports Bars   \n",
+       "1        None  ...  Beauty & Spas            Nail Salons   \n",
+       "2        None  ...          Pizza            Restaurants   \n",
+       "3  2013, 2012  ...    Active Life  Fitness & Instruction   \n",
+       "4        None  ...  Mediterranean            Restaurants   \n",
+       "\n",
+       "                      top2categories business_region  business_total_stars  \\\n",
+       "0            Restaurants Sports Bars      South West                 632.0   \n",
+       "1          Beauty & Spas Nail Salons      South East                  91.0   \n",
+       "2                  Pizza Restaurants      South West                 756.0   \n",
+       "3  Active Life Fitness & Instruction      South West                 948.0   \n",
+       "4          Mediterranean Restaurants      South West                 213.5   \n",
+       "\n",
+       "   user_days_on_yelp  user_reviews_per_day  user_times_elite  \\\n",
+       "0               2178              0.002296                 0   \n",
+       "1               1193              0.005868                 0   \n",
+       "2               2226              0.009434                 0   \n",
+       "3               3324              0.024970                 2   \n",
+       "4               1295              0.021622                 0   \n",
+       "\n",
+       "  authored_by_elite_user  user_business_avg_star_difference  \n",
+       "0                      0                              -2.00  \n",
+       "1                      0                               0.93  \n",
+       "2                      0                               0.09  \n",
+       "3                      0                               0.55  \n",
+       "4                      0                               0.25  \n",
+       "\n",
+       "[5 rows x 30 columns]"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "collapsed_sections": [],
+   "machine_shape": "hm",
+   "name": "Kaggle_Challenge_Data144",
+   "provenance": []
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
